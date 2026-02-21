@@ -1,0 +1,58 @@
+package ru.profia.app.ui.navigation
+
+import android.net.Uri
+
+object NavRoutes {
+    const val SPLASH = "splash"
+    const val SPECIALTY = "specialty"
+    const val BUSINESS_TYPE = "business_type"
+    const val AUTH = "auth"
+    const val HOME = "home"
+    const val PROJECTS = "projects"
+    const val CREATE_PROJECT = "create_project"
+    const val ADD_ROOM = "add_room/{projectId}/{roomId}"
+    const val ROOM_SCAN = "room_scan/{projectId}/{roomId}"
+    const val CALCULATOR = "calculator"
+    const val PROFILE = "profile"
+    const val CHANGE_PASSWORD = "change_password"
+    const val TWO_FA = "two_fa_settings"
+    const val FORM_KS2_KS3 = "form_ks2_ks3"
+    fun editProfileSection(section: String) = "edit_profile/$section"
+    const val MATERIALS = "materials"
+    const val WORKS = "works"
+    const val WORK_SECTION = "works_section/{sectionId}"
+    const val ADD_WORK_TYPES = "add_work_types"
+    const val WORK_CATEGORY = "work_category/{categoryId}"
+    const val ROOM_TYPES = "room_types"
+    const val STAGES = "stages"
+    const val SETTINGS = "settings"
+    const val SUBSCRIPTION = "subscription"
+    const val SUPPORT = "support"
+    const val ABOUT = "about"
+    const val FOREMAN = "foreman"
+    const val AGREEMENT = "agreement"
+    const val PERSONAL_DATA = "personal_data"
+    const val PRIVACY_POLICY = "privacy_policy"
+
+    const val PROJECT_DETAIL = "project/{projectId}"
+    const val EDIT_PROJECT = "edit_project/{projectId}"
+    const val GENERAL_ESTIMATE = "general_estimate/{projectId}"
+    const val FINAL_ESTIMATE = "final_estimate/{projectId}"
+    const val ACTS = "acts/{projectId}"
+    const val KS2 = "ks2/{projectId}"
+    const val KS3 = "ks3/{projectId}"
+
+    fun addRoom(projectId: String, roomId: String? = null) =
+        if (roomId != null) "add_room/$projectId/$roomId" else "add_room/$projectId/new"
+    fun roomScan(projectId: String, roomId: String) = "room_scan/$projectId/$roomId"
+    fun projectDetail(projectId: String) = "project/$projectId"
+    fun editProject(projectId: String) = "edit_project/$projectId"
+    fun generalEstimate(projectId: String) = "general_estimate/$projectId"
+    fun finalEstimate(projectId: String) = "final_estimate/$projectId"
+    fun acts(projectId: String) = "acts/$projectId"
+    fun ks2(projectId: String) = "ks2/$projectId"
+    fun ks3(projectId: String) = "ks3/$projectId"
+
+    fun workCategory(categoryId: String): String = "work_category/${Uri.encode(categoryId)}"
+    fun workSection(sectionId: String): String = "works_section/${Uri.encode(sectionId)}"
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Synced from Color.kt (single source-of-truth). Brand: dark olive + dark green. -->
+<resources>
+    <!-- BrandColorTokens = Color.kt -->
+    <color name="dark_olive">#2F3B27</color>
+    <color name="dark_green">#1F2A1B</color>
+    <color name="warm_beige">#D9C5A0</color>
+    <color name="warm_background">#FFF8E7</color>
+    <color name="accent_brown">#A67C52</color>
+    <color name="text_primary">#2C2C2C</color>
+    <color name="text_secondary">#6B6B6B</color>
+    <color name="divider">#E0D9D0</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="error_red">#D32F2F</color>
+    <!-- Legacy aliases for XML/Views -->
+    <color name="pistachio">#2F3B27</color>
+    <color name="cinnamon_brown">#A67C52</color>
+    <color name="beige_surface">#D9C5A0</color>
+    <color name="beige_background">#FFF8E7</color>
+    <color name="metallic_silver">#FFFFFF</color>
+    <color name="error">#D32F2F</color>
+</resources>

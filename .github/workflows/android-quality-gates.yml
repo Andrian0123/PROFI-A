@@ -1,0 +1,42 @@
+name: Android Quality Gates
+
+on:
+  push:
+    paths:
+      - "app/**"
+      - "tools/**"
+      - ".github/workflows/android-quality-gates.yml"
+  pull_request:
+    paths:
+      - "app/**"
+      - "tools/**"
+      - ".github/workflows/android-quality-gates.yml"
+
+jobs:
+  quality-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: i18n parity check
+        run: python tools/check_i18n_parity.py
+
+      - name: Android assembleDebug
+        run: ./gradlew :app:assembleDebug
+
+      - name: Android lintDebug
+        run: ./gradlew :app:lintDebug

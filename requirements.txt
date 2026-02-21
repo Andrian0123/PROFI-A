@@ -1,0 +1,14 @@
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+pydantic>=2.7.0
+numpy>=1.26.0
+open3d>=0.18.0
+pytest>=8.0.0
+ruff>=0.6.0
+black>=24.0.0
+# Опционально для обучения ML-модели сканера (откосы, короба):
+# scikit-learn>=1.3.0
+# joblib>=1.3.0
+# Опционально для анализа видео (tools/analyze_scan_video.py):
+# opencv-python-headless>=4.8.0
