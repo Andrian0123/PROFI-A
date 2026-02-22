@@ -236,14 +236,14 @@ fun ProfileScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                onChangePassword?.invoke() ?: onShowSnackbar(context.getString(R.string.dev_change_password))
+                                onChangePassword?.invoke() ?: onShowSnackbar(context.getString(R.string.profile_nav_to_change_password))
                             }
                             .padding(vertical = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(stringResource(R.string.change_password), style = MaterialTheme.typography.bodyMedium)
-                        Text(">", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.list_item_chevron), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     HorizontalDivider(color = Divider, modifier = Modifier.padding(vertical = 4.dp))
                     Row(
@@ -255,7 +255,7 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(stringResource(R.string.language), style = MaterialTheme.typography.bodyMedium)
-                        Text(">", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.list_item_chevron), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     HorizontalDivider(color = Divider, modifier = Modifier.padding(vertical = 4.dp))
                     Row(
@@ -269,7 +269,7 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(stringResource(R.string.two_fa), style = MaterialTheme.typography.bodyMedium)
-                        Text(">", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.list_item_chevron), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     HorizontalDivider(color = Divider, modifier = Modifier.padding(vertical = 4.dp))
                     Row(
@@ -281,7 +281,7 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(stringResource(R.string.delete_account), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
-                        Text(">", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.list_item_chevron), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     HorizontalDivider(color = Divider, modifier = Modifier.padding(vertical = 4.dp))
                     Row(
@@ -298,7 +298,7 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(stringResource(R.string.exit), style = MaterialTheme.typography.bodyMedium)
-                        Text(">", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.list_item_chevron), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }

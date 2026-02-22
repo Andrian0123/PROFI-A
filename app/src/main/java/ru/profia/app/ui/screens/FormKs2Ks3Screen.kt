@@ -209,7 +209,7 @@ fun FormKs2Ks3Screen(
             }
             if (profile == null) {
                 Text(
-                    "Заполните реквизиты компании в профиле (ИП/ООО).",
+                    stringResource(R.string.form_ks2_ks3_fill_requisites),
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 16.dp)
                 )
@@ -218,8 +218,8 @@ fun FormKs2Ks3Screen(
                 text = stringResource(R.string.generate_and_share),
                 onClick = {
                     when {
-                        profile == null -> Toast.makeText(context, "Заполните реквизиты ИП/ООО в профиле", Toast.LENGTH_LONG).show()
-                        selectedAct == null || actItems.isEmpty() -> Toast.makeText(context, "Выберите проект и акт с позициями", Toast.LENGTH_LONG).show()
+                        profile == null -> Toast.makeText(context, context.getString(R.string.form_ks2_ks3_fill_requisites_toast), Toast.LENGTH_LONG).show()
+                        selectedAct == null || actItems.isEmpty() -> Toast.makeText(context, context.getString(R.string.form_ks2_ks3_select_act_toast), Toast.LENGTH_LONG).show()
                         else -> showFormatDialog = true
                     }
                 },

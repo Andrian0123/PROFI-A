@@ -15,6 +15,26 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** Линия «паутинки» покрытия (координаты 0..1). */
+data class CoverageWebLine(
+    val start: Pair<Double, Double>,
+    val end: Pair<Double, Double>,
+    val alpha: Double
+)
+
+/** Зона, не покрытая сканом (boundary — список [x,y] в 0..1). */
+data class MissingZone(
+    val boundary: List<Pair<Double, Double>>,
+    val label: String
+)
+
+/** Данные покрытия от бэкенда. */
+data class CoverageData(
+    val percentage: Double,
+    val webLines: List<CoverageWebLine>,
+    val missingZones: List<MissingZone>
+)
+
 data class ScanDimensionsResult(
     val scanId: String,
     val lengthM: Double,
@@ -25,7 +45,8 @@ data class ScanDimensionsResult(
     val ceilingAreaM2: Double,
     val wallAreaM2: Double,
     val coveragePercentage: Double,
-    val scanQuality: Double
+    val scanQuality: Double,
+    val coverageData: CoverageData? = null
 )
 
 /** Результат сканирования документа: размеры в мм и распознанное содержимое. */
@@ -209,6 +230,7 @@ class DefaultScanProcessingApi @Inject constructor() : ScanProcessingApi {
         val dimensions = json.optJSONObject("dimensions") ?: JSONObject()
         val coverage = json.optJSONObject("coverage") ?: JSONObject()
         val quality = json.optJSONObject("quality_metrics") ?: JSONObject()
+        val coverageData = parseCoverageData(coverage)
         return ScanDimensionsResult(
             scanId = json.optString("scan_id", ""),
             lengthM = dimensions.optDouble("length_m", 0.0),
@@ -219,8 +241,37 @@ class DefaultScanProcessingApi @Inject constructor() : ScanProcessingApi {
             ceilingAreaM2 = dimensions.optDouble("ceiling_area_m2", 0.0),
             wallAreaM2 = dimensions.optDouble("wall_area_m2", 0.0),
             coveragePercentage = coverage.optDouble("percentage", 0.0),
-            scanQuality = quality.optDouble("scan_quality", 0.0)
+            scanQuality = quality.optDouble("scan_quality", 0.0),
+            coverageData = coverageData
         )
+    }
+
+    private fun parseCoverageData(coverage: JSONObject): CoverageData? {
+        val pct = coverage.optDouble("percentage", 0.0)
+        val webLinesArray = coverage.optJSONArray("web_lines")
+        val webLines = if (webLinesArray != null) (0 until webLinesArray.length()).mapNotNull { i ->
+            val obj = webLinesArray.optJSONObject(i) ?: return@mapNotNull null
+            val startArr = obj.optJSONArray("start")
+            val endArr = obj.optJSONArray("end")
+            if (startArr != null && startArr.length() >= 2 && endArr != null && endArr.length() >= 2) {
+                CoverageWebLine(
+                    start = startArr.optDouble(0, 0.0) to startArr.optDouble(1, 0.0),
+                    end = endArr.optDouble(0, 0.0) to endArr.optDouble(1, 0.0),
+                    alpha = obj.optDouble("alpha", 1.0).coerceIn(0.0, 1.0)
+                )
+            } else null
+        } else emptyList()
+        val missingArray = coverage.optJSONArray("missing_zones")
+        val missingZones = if (missingArray != null) (0 until missingArray.length()).mapNotNull { i ->
+            val obj = missingArray.optJSONObject(i) ?: return@mapNotNull null
+            val boundaryArr = obj.optJSONArray("boundary") ?: return@mapNotNull null
+            val boundary = (0 until boundaryArr.length()).mapNotNull { j ->
+                val pt = boundaryArr.optJSONArray(j)
+                if (pt != null && pt.length() >= 2) pt.optDouble(0, 0.0) to pt.optDouble(1, 0.0) else null
+            }
+            if (boundary.isNotEmpty()) MissingZone(boundary = boundary, label = obj.optString("label", "")) else null
+        } else emptyList()
+        return CoverageData(percentage = pct, webLines = webLines, missingZones = missingZones)
     }
 
     private fun parseDocumentScanResponse(jsonRaw: String): DocumentScanResult {

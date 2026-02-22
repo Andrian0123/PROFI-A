@@ -71,7 +71,7 @@ class PreferencesDataStore(private val context: Context) {
         AppSettings(
             city = prefs[PreferenceKeys.CITY] ?: "Краснодар",
             currency = prefs[PreferenceKeys.CURRENCY] ?: "RUR",
-            language = prefs[PreferenceKeys.LANGUAGE] ?: "RU",
+            language = prefs[PreferenceKeys.LANGUAGE] ?: "RU", // русский по умолчанию
             unitSystem = prefs[PreferenceKeys.UNIT_SYSTEM] ?: "Метры"
         )
     }

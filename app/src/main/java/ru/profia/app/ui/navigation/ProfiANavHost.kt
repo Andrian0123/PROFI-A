@@ -59,6 +59,7 @@ import ru.profia.app.ui.viewmodel.ProjectViewModel
 import ru.profia.app.ui.viewmodel.SubscriptionViewModel
 
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
@@ -116,6 +117,10 @@ fun ProfiANavHost(
                         putExtra(Intent.EXTRA_TEXT, shareText)
                     }
                     context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_app)))
+                }
+                "download_apk" -> {
+                    val url = "https://andrian0123.github.io/PROFI-A/profi-a.apk"
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                 }
                 "foreman" -> navController.navigate(NavRoutes.FOREMAN) { launchSingleTop = true }
                 "agreement" -> navController.navigate(NavRoutes.AGREEMENT) { launchSingleTop = true }

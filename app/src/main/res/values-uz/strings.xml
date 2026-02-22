@@ -46,6 +46,7 @@
     <string name="about">Ilova haqida</string>
     <string name="my_profile">Profil</string>
     <string name="my_projects">Mening loyihalarim</string>
+    <string name="download_apk_link">Ilovani yuklab olish (APK)</string>
     <string name="add_foreman">Boshliq / ishchi qoʻshish</string>
     <string name="foreman_object_project">Ob\'ekt (loyiha)</string>
     <string name="foreman_project_selected_later">Loyiha keyinroq tanlanadi</string>
@@ -403,6 +404,7 @@
     <string name="profile_cabinet_type">Account type</string>
     <string name="profile_edit_btn">Edit</string>
     <string name="profile_form_ks2_ks3_btn">Generate KS-2 / KS-3</string>
+    <string name="profile_nav_to_change_password">Use the menu to change your password</string>
     <string name="profile_inn_kpp">INN/KPP: %1$s / %2$s</string>
     <string name="profile_ip_ooo">Sole prop / LLC</string>
     <string name="profile_ks2_ks3_desc">Generate acceptance certificate (KS-2) or cost statement (KS-3) in PDF or Excel.</string>

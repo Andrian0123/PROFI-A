@@ -26,8 +26,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import ru.profia.app.R
 import ru.profia.app.data.model.KS3Certificate
 import ru.profia.app.ui.components.BaseScreen
 import ru.profia.app.ui.viewmodel.ProjectTitleViewModel
@@ -51,7 +53,7 @@ fun KS3Screen(
 
     BaseScreen(
         navController = navController,
-        title = projectName ?: "Справка КС-3"
+        title = projectName ?: stringResource(R.string.ks3_screen_title)
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -75,23 +77,23 @@ fun KS3Screen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Унифицированная форма № КС-3",
+                        text = stringResource(R.string.ks3_form_title),
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Справка о стоимости выполненных работ и затрат",
+                        text = stringResource(R.string.ks3_form_subtitle),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Номер документа: ${ks3Cert.number}", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Дата: ${dateFormat.format(ks3Cert.date)}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.ks2_doc_number, ks3Cert.number), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.ks2_date, dateFormat.format(ks3Cert.date)), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Text(
-                        text = "Отчетный период: ${dateFormat.format(ks3Cert.reportPeriodStart)} - ${dateFormat.format(ks3Cert.reportPeriodEnd)}",
+                        text = stringResource(R.string.ks2_report_period, dateFormat.format(ks3Cert.reportPeriodStart), dateFormat.format(ks3Cert.reportPeriodEnd)),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -109,8 +111,8 @@ fun KS3Screen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text("Договор подряда № ${ks3Cert.contractNumber}", fontWeight = FontWeight.Medium)
-                    Text("от ${dateFormat.format(ks3Cert.contractDate)}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.ks3_contract, ks3Cert.contractNumber), fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.ks3_contract_date, dateFormat.format(ks3Cert.contractDate)), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
 
@@ -136,20 +138,20 @@ fun KS3Screen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            "Наименование",
+                            stringResource(R.string.ks3_column_name),
                             modifier = Modifier.weight(2f),
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.bodySmall
                         )
                         Text(
-                            "С начала работ",
+                            stringResource(R.string.ks3_column_from_start),
                             modifier = Modifier.weight(1f),
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.bodySmall,
                             textAlign = TextAlign.End
                         )
                         Text(
-                            "За период",
+                            stringResource(R.string.ks3_column_for_period),
                             modifier = Modifier.weight(1f),
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.bodySmall,
@@ -164,7 +166,7 @@ fun KS3Screen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                "Строительно-монтажные работы",
+                                stringResource(R.string.ks3_default_work_type),
                                 modifier = Modifier.weight(2f),
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -214,7 +216,7 @@ fun KS3Screen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("ИТОГО:", modifier = Modifier.weight(2f), fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.ks2_total), modifier = Modifier.weight(2f), fontWeight = FontWeight.Bold)
                         Text(
                             "%,.0f".format(totalFromStart),
                             modifier = Modifier.weight(1f),
@@ -232,7 +234,7 @@ fun KS3Screen(
                         modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("НДС ${ks3Cert.vatRate.toInt()}%:", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.ks2_vat, ks3Cert.vatRate.toInt()), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             "%,.0f".format(vatAmount),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -244,7 +246,7 @@ fun KS3Screen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("ВСЕГО к оплате:", fontWeight = FontWeight.Bold, color = Primary)
+                        Text(stringResource(R.string.ks2_total_to_pay), fontWeight = FontWeight.Bold, color = Primary)
                         Text(
                             "%,.0f".format(totalWithVat),
                             fontWeight = FontWeight.Bold,

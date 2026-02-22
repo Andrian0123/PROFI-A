@@ -81,6 +81,7 @@ fun ProfiANavigationDrawer(
                             DrawerMenuItem(stringResource(R.string.my_profile), Icons.Default.Person, "profile"),
                             DrawerMenuItem(stringResource(R.string.my_projects), Icons.Default.Folder, "home"),
                             DrawerMenuItem(stringResource(R.string.calculator), Icons.Default.Calculate, "calculator"),
+                            DrawerMenuItem(stringResource(R.string.download_apk_link), Icons.Default.Share, "download_apk"),
                             DrawerMenuItem(stringResource(R.string.add_foreman), Icons.Default.Build, "foreman")
                         ),
                         currentRoute = currentRoute,

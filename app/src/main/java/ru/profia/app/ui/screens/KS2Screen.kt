@@ -69,7 +69,7 @@ fun KS2Screen(
 
     BaseScreen(
         navController = navController,
-        title = projectName ?: "Акт КС-2",
+        title = projectName ?: stringResource(R.string.ks2_screen_title),
         floatingActionButton = {
             androidx.compose.material3.FloatingActionButton(
                 onClick = { showAddItemDialog = true },
@@ -100,23 +100,23 @@ fun KS2Screen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Унифицированная форма № КС-2",
+                        text = stringResource(R.string.ks2_form_title),
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Акт о приемке выполненных работ",
+                        text = stringResource(R.string.ks2_form_subtitle),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Номер документа: ${ks2Act.number}", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Дата: ${dateFormat.format(ks2Act.date)}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.ks2_doc_number, ks2Act.number), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.ks2_date, dateFormat.format(ks2Act.date)), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Text(
-                        text = "Отчетный период: ${dateFormat.format(ks2Act.reportPeriodStart)} - ${dateFormat.format(ks2Act.reportPeriodEnd)}",
+                        text = stringResource(R.string.ks2_report_period, dateFormat.format(ks2Act.reportPeriodStart), dateFormat.format(ks2Act.reportPeriodEnd)),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -163,7 +163,7 @@ fun KS2Screen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("ИТОГО:", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.ks2_total), color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                         Text(
                             text = "%,.2f ₽".format(totalSum),
                             color = MaterialTheme.colorScheme.onSurface,
@@ -174,7 +174,7 @@ fun KS2Screen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("НДС (${ks2Act.vatRate.toInt()}%):", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.ks2_vat, ks2Act.vatRate.toInt()), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             text = "%,.2f ₽".format(vatSum),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -185,7 +185,7 @@ fun KS2Screen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("ВСЕГО к оплате:", color = Primary, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.ks2_total_to_pay), color = Primary, fontWeight = FontWeight.Bold)
                         Text(
                             text = "%,.2f ₽".format(totalWithVat),
                             color = Primary,
@@ -241,7 +241,7 @@ fun KS2ItemCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "#${item.positionNumber}. ${item.workName}",
+                    text = stringResource(R.string.ks2_item_title, item.positionNumber, item.workName),
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -254,19 +254,19 @@ fun KS2ItemCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${item.quantity} ${item.unit} × %,.0f ₽".format(item.unitPrice),
+                    text = stringResource(R.string.ks2_item_qty_price, item.quantity.toString(), item.unit, item.unitPrice),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "%,.0f ₽".format(item.totalPrice),
+                    text = stringResource(R.string.ks2_item_total_format, item.totalPrice),
                     fontWeight = FontWeight.Bold,
                     color = Primary
                 )
             }
             if (item.unitPriceCode.isNotBlank()) {
                 Text(
-                    text = "Шифр: ${item.unitPriceCode}",
+                    text = stringResource(R.string.ks2_code_label, item.unitPriceCode),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -293,30 +293,30 @@ fun KS2ItemDialog(
         Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = if (item == null) "Добавить работу" else "Редактировать работу",
+                    text = if (item == null) stringResource(R.string.ks2_dialog_add) else stringResource(R.string.ks2_dialog_edit),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
                 ProfiTextField(
                     value = positionNumber,
                     onValueChange = { positionNumber = it },
-                    label = "№ п/п",
+                    label = stringResource(R.string.ks2_label_position),
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                 )
                 ProfiTextField(
                     value = workName,
                     onValueChange = { workName = it },
-                    label = "Наименование работ",
+                    label = stringResource(R.string.ks2_label_work_name),
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                 )
                 ProfiTextField(
                     value = unitPriceCode,
                     onValueChange = { unitPriceCode = it },
-                    label = "Шифр расценки",
-                    placeholder = { Text("ФЕР 12-01-007-07") },
+                    label = stringResource(R.string.ks2_label_code),
+                    placeholder = { Text(stringResource(R.string.ks2_placeholder_fer)) },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                 )
-                Text("Ед. изм.", style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(bottom = 4.dp))
+                Text(stringResource(R.string.ks2_label_unit), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(bottom = 4.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -336,13 +336,13 @@ fun KS2ItemDialog(
                     ProfiTextField(
                         value = quantity,
                         onValueChange = { quantity = it },
-                        label = "Количество",
+                        label = stringResource(R.string.ks2_label_quantity),
                         modifier = Modifier.weight(1f)
                     )
                     ProfiTextField(
                         value = unitPrice,
                         onValueChange = { unitPrice = it },
-                        label = "Цена за ед.",
+                        label = stringResource(R.string.ks2_label_unit_price),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -358,7 +358,7 @@ fun KS2ItemDialog(
                         modifier = Modifier.fillMaxWidth().padding(8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Сумма:")
+                        Text(stringResource(R.string.ks2_label_sum))
                         Text(
                             text = "%,.2f ₽".format(total),
                             fontWeight = FontWeight.Bold,
@@ -370,7 +370,7 @@ fun KS2ItemDialog(
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = onDismiss) { Text("Отмена") }
+                    TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
                     Button(
                         onClick = {
                             val newItem = KS2Item(
@@ -389,7 +389,7 @@ fun KS2ItemDialog(
                         enabled = workName.isNotBlank() && quantity.isNotBlank() && unitPrice.isNotBlank(),
                         colors = ButtonDefaults.buttonColors(containerColor = Primary)
                     ) {
-                        Text("Сохранить")
+                        Text(stringResource(R.string.save))
                     }
                 }
             }

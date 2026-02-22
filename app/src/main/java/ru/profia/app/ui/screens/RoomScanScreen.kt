@@ -12,6 +12,8 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
@@ -53,6 +55,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
@@ -62,12 +66,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.profia.app.R
 import android.net.Uri
+import ru.profia.app.data.remote.CoverageData
 import ru.profia.app.ui.components.BaseScreen
 import ru.profia.app.ui.viewmodel.RoomScanViewModel
 import java.io.File
 
 /** Состояние экрана сканирования по алгоритму измерения помещения (Подключить → Сканировать → Анализ → Размеры). */
-private enum class ScanStep { NOT_CONNECTED, CONNECTED, SCANNING, ANALYZING, SCAN_ERROR, SHOW_DIMENSIONS }
+private enum class ScanStep { NOT_CONNECTED, CONNECTED, MARK_ZONES, SCANNING, ANALYZING, SCAN_ERROR, SHOW_DIMENSIONS }
+
+/** Тип зоны для ручной разметки плана (0 = пусто, 1 = пол, 2 = стена, 3 = потолок, 4 = проём). */
+private const val ZONE_NONE = 0
+private const val ZONE_FLOOR = 1
+private const val ZONE_WALL = 2
+private const val ZONE_CEILING = 3
+private const val ZONE_OPENING = 4
+private const val ZONE_MAX = 5
 
 /**
  * Экран сканирования помещения 3D (по аналогии с Polycam).
@@ -89,8 +102,14 @@ fun RoomScanScreen(
     var preliminaryPerimeter by remember { mutableStateOf<Double?>(null) }
     var preliminaryFloorAreaM2 by remember { mutableStateOf<Double?>(null) }
     var preliminaryCoveragePercent by remember { mutableStateOf<Double?>(null) }
+    var preliminaryCoverageData by remember { mutableStateOf<CoverageData?>(null) }
     var selectedFrameFile by remember { mutableStateOf<File?>(null) }
     var scanErrorMessage by remember { mutableStateOf<String?>(null) }
+    val zoneRows = 4
+    val zoneCols = 4
+    var zoneGrid by remember {
+        mutableStateOf(List(zoneRows) { List(zoneCols) { ZONE_NONE } })
+    }
     val isServerProcessing by viewModel.serverProcessing.collectAsState()
     val scope = rememberCoroutineScope()
 
@@ -175,6 +194,7 @@ fun RoomScanScreen(
                     preliminaryPerimeter = processDimensions.perimeterM
                     preliminaryFloorAreaM2 = processDimensions.floorAreaM2.takeIf { it > 0.0 }
                     preliminaryCoveragePercent = processDimensions.coveragePercentage.takeIf { it > 0.0 }
+                    preliminaryCoverageData = processDimensions.coverageData
                     frameFile.delete()
                     selectedFrameFile = null
                     scanStep = ScanStep.SHOW_DIMENSIONS
@@ -188,6 +208,7 @@ fun RoomScanScreen(
                         preliminaryPerimeter = finishDimensions?.perimeterM?.takeIf { it > 0.0 } ?: 12.4
                         preliminaryFloorAreaM2 = finishDimensions?.floorAreaM2?.takeIf { it > 0.0 }
                         preliminaryCoveragePercent = finishDimensions?.coveragePercentage?.takeIf { it > 0.0 }
+                        preliminaryCoverageData = finishDimensions?.coverageData
                         frameFile.delete()
                         selectedFrameFile = null
                         scanStep = ScanStep.SHOW_DIMENSIONS
@@ -288,13 +309,7 @@ fun RoomScanScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         OutlinedButton(
-                            onClick = {
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.scan_mark_on_plan_coming_soon),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            },
+                            onClick = { scanStep = ScanStep.MARK_ZONES },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp)
                         ) {
@@ -307,6 +322,80 @@ fun RoomScanScreen(
                         ) {
                             Text(stringResource(R.string.scan_scan))
                         }
+                    }
+                }
+                ScanStep.MARK_ZONES -> {
+                    Text(
+                        text = stringResource(R.string.scan_mark_plan_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Text(
+                        text = stringResource(R.string.scan_mark_plan_hint),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        for (row in 0 until zoneRows) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                for (col in 0 until zoneCols) {
+                                    val zone = zoneGrid.getOrNull(row)?.getOrNull(col) ?: ZONE_NONE
+                                    val label = when (zone) {
+                                        ZONE_FLOOR -> stringResource(R.string.scan_zone_floor_short)
+                                        ZONE_WALL -> stringResource(R.string.scan_zone_wall_short)
+                                        ZONE_CEILING -> stringResource(R.string.scan_zone_ceiling_short)
+                                        ZONE_OPENING -> stringResource(R.string.scan_zone_opening_short)
+                                        else -> stringResource(R.string.scan_zone_none)
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(48.dp)
+                                            .background(
+                                                when (zone) {
+                                                    ZONE_FLOOR -> MaterialTheme.colorScheme.primaryContainer
+                                                    ZONE_WALL -> MaterialTheme.colorScheme.secondaryContainer
+                                                    ZONE_CEILING -> MaterialTheme.colorScheme.tertiaryContainer
+                                                    ZONE_OPENING -> MaterialTheme.colorScheme.errorContainer
+                                                    else -> MaterialTheme.colorScheme.surfaceVariant
+                                                },
+                                                RoundedCornerShape(8.dp)
+                                            )
+                                            .clickable {
+                                                zoneGrid = zoneGrid.mapIndexed { r, rowList ->
+                                                    if (r != row) rowList
+                                                    else rowList.mapIndexed { c, v ->
+                                                        if (c != col) v else (v + 1) % ZONE_MAX
+                                                    }
+                                                }
+                                            },
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = label,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = { scanStep = ScanStep.CONNECTED },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(stringResource(R.string.scan_mark_done))
                     }
                 }
                 ScanStep.SCANNING -> {
@@ -422,6 +511,25 @@ fun RoomScanScreen(
                             }
                         }
                     }
+                    preliminaryCoverageData?.let { data ->
+                        if (data.webLines.isNotEmpty() || data.missingZones.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(8.dp)) {
+                                    Text(
+                                        stringResource(R.string.scan_coverage_plan),
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    CoveragePlanCanvas(coverageData = data)
+                                }
+                            }
+                        }
+                    }
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -501,6 +609,48 @@ private suspend fun createSyntheticFrameFile(
     }
     bitmap.recycle()
     file
+}
+
+@Composable
+private fun CoveragePlanCanvas(
+    coverageData: CoverageData,
+    modifier: Modifier = Modifier
+) {
+    val planColor = MaterialTheme.colorScheme.primary
+    val missingColor = MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(120.dp)
+    ) {
+        val w = size.width
+        val h = size.height
+        fun x(n: Double) = (n * w).toFloat()
+        fun y(n: Double) = (n * h).toFloat()
+
+        // Непокрытые зоны — полигоны
+        coverageData.missingZones.forEach { zone ->
+            if (zone.boundary.size >= 2) {
+                val path = Path().apply {
+                    moveTo(x(zone.boundary[0].first), y(zone.boundary[0].second))
+                    zone.boundary.drop(1).forEach { pt ->
+                        lineTo(x(pt.first), y(pt.second))
+                    }
+                    close()
+                }
+                drawPath(path, missingColor)
+            }
+        }
+        // Линии паутинки покрытия
+        coverageData.webLines.forEach { line ->
+            drawLine(
+                color = planColor.copy(alpha = (line.alpha * 0.8f).toFloat()),
+                start = Offset(x(line.start.first), y(line.start.second)),
+                end = Offset(x(line.end.first), y(line.end.second)),
+                strokeWidth = 2f
+            )
+        }
+    }
 }
 
 private fun buildSyntheticTrajectoryJson(): String = """

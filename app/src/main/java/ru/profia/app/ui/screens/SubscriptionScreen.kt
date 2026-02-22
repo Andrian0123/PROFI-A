@@ -86,8 +86,8 @@ fun SubscriptionScreen(
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Пробный период", style = MaterialTheme.typography.titleMedium)
-                        Text("Осталось дней: $trialDaysRemaining")
+                        Text(stringResource(R.string.subscription_trial), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.subscription_trial_days_left, trialDaysRemaining ?: 0))
                         // Прогресс считаем исходя из фактической длительности пробного периода
                         val totalDays = if (subscription.startDate > 0 && subscription.endDate > subscription.startDate) {
                             ((subscription.endDate - subscription.startDate) / (24 * 60 * 60 * 1000)).coerceAtLeast(1)
@@ -138,34 +138,39 @@ fun SubscriptionScreen(
                     }
                 }
             }
+            val plan1MonthTitle = stringResource(R.string.subscription_plan_1_month)
+            val plan6MonthsTitle = stringResource(R.string.subscription_plan_6_months)
+            val plan1YearTitle = stringResource(R.string.subscription_plan_1_year)
+            val badgeSave = stringResource(R.string.subscription_badge_save)
+            val badgeMax = stringResource(R.string.subscription_badge_max)
             SubscriptionPlanCard(
-                title = "1 месяц",
+                title = plan1MonthTitle,
                 price = LocaleCurrencyHelper.formatPrice(299, settings.currency),
                 badge = null,
-                onSelect = { purchaseConfirm = "1 месяц" to 1 }
+                onSelect = { purchaseConfirm = plan1MonthTitle to 1 }
             )
             SubscriptionPlanCard(
-                title = "6 месяцев",
+                title = plan6MonthsTitle,
                 price = LocaleCurrencyHelper.formatPrice(1500, settings.currency),
-                badge = "Выгодный пакет",
-                onSelect = { purchaseConfirm = "6 месяцев" to 6 }
+                badge = badgeSave,
+                onSelect = { purchaseConfirm = plan6MonthsTitle to 6 }
             )
             SubscriptionPlanCard(
-                title = "1 год",
+                title = plan1YearTitle,
                 price = LocaleCurrencyHelper.formatPrice(3200, settings.currency),
-                badge = "Максимум выгоды",
-                onSelect = { purchaseConfirm = "1 год" to 12 }
+                badge = badgeMax,
+                onSelect = { purchaseConfirm = plan1YearTitle to 12 }
             )
             Card(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Промокод", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.subscription_promocode), style = MaterialTheme.typography.titleMedium)
                     ProfiTextField(
                         value = promoCode,
                         onValueChange = { promoCode = it },
-                        label = "Введите промокод",
+                        label = stringResource(R.string.subscription_promocode_hint),
                         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
                     )
                     promoMessage?.let { Text(it) }
@@ -173,15 +178,15 @@ fun SubscriptionScreen(
                         onClick = {
                             subscriptionViewModel.activatePromoCode(promoCode) { result ->
                                 val msg = result.fold(
-                                    { "Промокод активирован на $it мес." },
-                                    { it.message ?: "Ошибка активации" }
+                                    { context.getString(R.string.subscription_promocode_activated, it) },
+                                    { it.message ?: context.getString(R.string.subscription_promocode_error) }
                                 )
                                 promoMessage = msg
                                 onShowSnackbar(msg)
                                 if (result.isSuccess) promoCode = ""
                             }
                         },
-                        text = "Активировать"
+                        text = stringResource(R.string.subscription_activate)
                     )
                 }
             }
@@ -189,19 +194,19 @@ fun SubscriptionScreen(
                 AlertDialog(
                     onDismissRequest = { purchaseConfirm = null },
                     title = { Text(stringResource(R.string.confirm_subscription)) },
-                    text = { Text("Подписка на $title. Подтвердить оформление?") },
+                    text = { Text(stringResource(R.string.subscription_confirm_question, title)) },
                     confirmButton = {
                         TextButton(onClick = {
                             if (activity != null) {
                                 subscriptionViewModel.startPurchase(activity, months) { result ->
                                     result.fold(
                                         onSuccess = {
-                                            onShowSnackbar("Подписка оформлена")
+                                            onShowSnackbar(context.getString(R.string.subscription_done))
                                             purchaseConfirm = null
                                         },
                                         onFailure = { e ->
                                             if (e !is ru.profia.app.billing.BillingManager.CancelledException) {
-                                                onShowSnackbar(e.message ?: "Ошибка оплаты")
+                                                onShowSnackbar(e.message ?: context.getString(R.string.subscription_error_payment))
                                             }
                                             purchaseConfirm = null
                                         }
@@ -209,16 +214,16 @@ fun SubscriptionScreen(
                                 }
                             } else {
                                 subscriptionViewModel.purchaseSubscription(months)
-                                onShowSnackbar("Подписка оформлена")
+                                onShowSnackbar(context.getString(R.string.subscription_done))
                                 purchaseConfirm = null
                             }
                         }) {
-                            Text("Оформить", color = Pistachio)
+                            Text(stringResource(R.string.subscription_confirm_btn), color = Pistachio)
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { purchaseConfirm = null }) {
-                            Text("Отмена")
+                            Text(stringResource(R.string.cancel))
                         }
                     }
                 )
@@ -245,7 +250,7 @@ private fun SubscriptionPlanCard(
             Text(title, style = MaterialTheme.typography.titleMedium)
             Text(price)
             badge?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
-            RoundedButton(onClick = onSelect, text = "Выбрать")
+            RoundedButton(onClick = onSelect, text = stringResource(R.string.subscription_select))
         }
     }
 }

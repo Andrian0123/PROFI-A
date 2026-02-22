@@ -252,7 +252,7 @@ fun GeneralEstimateScreen(
                         onDismissRequest = { shareMenuExpanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("PDF") },
+                            text = { Text(stringResource(R.string.export_format_pdf)) },
                             onClick = {
                                 shareMenuExpanded = false
                                 scope.launch {
@@ -265,7 +265,7 @@ fun GeneralEstimateScreen(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Excel (CSV)") },
+                            text = { Text(stringResource(R.string.export_format_csv)) },
                             onClick = {
                                 shareMenuExpanded = false
                                 scope.launch {
@@ -403,7 +403,7 @@ fun GeneralEstimateScreen(
                                             } else {
                                                 Icon(
                                                     imageVector = if (item.id in selectedIds) Icons.Default.RadioButtonChecked else Icons.Default.RadioButtonUnchecked,
-                                                    contentDescription = if (item.id in selectedIds) "Выбрано" else "Выбрать",
+                                                    contentDescription = if (item.id in selectedIds) stringResource(R.string.content_desc_selected) else stringResource(R.string.content_desc_select),
                                                     modifier = Modifier.size(28.dp),
                                                     tint = if (item.id in selectedIds) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                                 )

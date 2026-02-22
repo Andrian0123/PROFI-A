@@ -614,11 +614,11 @@ private fun ActContentDialog(
                             onDismissRequest = { shareMenuExpanded = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("PDF") },
+                                text = { Text(stringResource(R.string.export_format_pdf)) },
                                 onClick = { shareMenuExpanded = false; onSharePdf() }
                             )
                             DropdownMenuItem(
-                                text = { Text("Excel (CSV)") },
+                                text = { Text(stringResource(R.string.export_format_csv)) },
                                 onClick = { shareMenuExpanded = false; onShareExcel() }
                             )
                         }
