@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ПРОФЙ-А — Сметы и акты для строительства и ремонта</title>
+  <meta name="description" content="Вспомогательный инструмент для составления смет и расчётов по строительным и ремонтным работам.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ПРОФЙ-А — Сметы и акты для строительства и ремонта">
+  <meta property="og:description" content="Вспомогательный инструмент для составления смет и расчётов по строительным и ремонтным работам.">
+  <meta property="og:locale" content="ru_RU">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2F3B27;
+      --primary-variant: #1F2A1B;
+      --background: #FFF8E7;
+      --surface: #F5EFE0;
+      --surface-variant: #EDE6D8;
+      --text-primary: #2C2C2C;
+      --text-secondary: #6B6B6B;
+      --divider: #E0D9D0;
+      --on-primary: #FFFFFF;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Manrope', -apple-system, sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 2rem 1.25rem 2.5rem; }
+    header { text-align: center; padding: 2.5rem 0 1.5rem; }
+    .logo { font-size: 1.85rem; font-weight: 700; letter-spacing: 0.02em; color: var(--primary); margin-bottom: 0.4rem; }
+    .tagline { font-size: 0.95rem; color: var(--text-secondary); font-weight: 500; }
+    .card { background: var(--surface); border-radius: 12px; padding: 1.35rem 1.5rem; margin: 1.25rem 0; border: 1px solid var(--divider); }
+    .card-desc { font-size: 0.95rem; color: var(--text-primary); margin: 0; }
+    .disclaimer { font-size: 0.82rem; color: var(--text-secondary); margin: 1.25rem 0; padding: 1rem 1.25rem; background: var(--surface-variant); border-radius: 10px; border: 1px solid var(--divider); }
+    .section-title { font-size: 0.88rem; font-weight: 600; color: var(--text-primary); margin: 1.75rem 0 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .features { list-style: none; padding: 0; margin: 0; }
+    .features li { padding: 0.5rem 0 0.5rem 1.5rem; position: relative; font-size: 0.92rem; color: var(--text-primary); }
+    .features li::before { content: ""; position: absolute; left: 0; top: 0.78rem; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+    .cta { text-align: center; margin: 2.25rem 0; }
+    .cta a { display: inline-block; padding: 0.9rem 1.85rem; background: var(--primary); color: var(--on-primary); text-decoration: none; font-weight: 600; font-size: 0.95rem; border-radius: 12px; transition: background 0.2s, opacity 0.2s; }
+    .cta a:hover { background: var(--primary-variant); }
+    .cta-note { text-align: center; font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.5rem; }
+    .dev-notice {
+      background: var(--surface-variant);
+      border: 1px solid var(--divider);
+      border-radius: 10px;
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      text-align: center;
+      font-weight: 500;
+    }
+    .footer-links { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--divider); font-size: 0.88rem; text-align: center; }
+    .footer-links a { color: var(--primary); text-decoration: none; margin: 0 0.75rem; }
+    .footer-links a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1 class="logo">ПРОФЙ-А</h1>
+      <p class="tagline">Сметы и акты для строительства и ремонта</p>
+    </header>
+    <div class="dev-notice">
+      Приложение ещё в разработке. Функции и интерфейс могут измениться.
+    </div>
+    <div class="card">
+      <p class="card-desc">
+        ПРОФЙ-А — вспомогательный инструмент для составления смет и расчётов по строительным и ремонтным работам. Проекты, комнаты, виды работ, сметы, акты КС-2/КС-3, экспорт в PDF и CSV.
+      </p>
+    </div>
+    <p class="disclaimer">
+      Все сметы и расчёты носят ориентировочный характер. Ответственность за решения и действия на основе данных приложения несёт пользователь.
+    </p>
+    <h2 class="section-title">Возможности</h2>
+    <ul class="features">
+      <li>Проекты и помещения с расчётом площадей (пол, стены, потолок, проёмы)</li>
+      <li>Справочники видов работ и материалов</li>
+      <li>Сметы по проекту и экспорт в PDF/CSV</li>
+      <li>Акты приёмки КС-2 и справки КС-3 с реквизитами ИП/ООО</li>
+      <li>Подписка с пробным периодом, работа офлайн</li>
+    </ul>
+    <div class="cta">
+      <a href="https://play.google.com/store/apps/details?id=ru.profia.app" target="_blank" rel="noopener">Скачать в Google Play</a>
+    </div>
+    <p class="cta-note">Приложение для Android</p>
+    <footer class="footer-links">
+      <a href="privacy.html">Политика конфиденциальности</a>
+      <a href="terms.html">Пользовательское соглашение</a>
+    </footer>
+  </div>
+</body>
+</html>
