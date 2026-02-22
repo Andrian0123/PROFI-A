@@ -22,15 +22,19 @@ android {
         versionCode = 1
         versionName = "1.0.0"
         buildConfigField("String", "VERIFICATION_SERVER_URL", "\"\"")
-        // NOTE: for Android emulator use http://10.0.2.2:8000
-        buildConfigField("String", "SCAN_SERVER_URL", "\"\"")
-        buildConfigField("String", "AUTH_SERVER_URL", "\"\"")
-        buildConfigField("String", "SUPPORT_SERVER_URL", "\"\"")
+        // Локальный backend: порты 3001, 3002, 3003 (не 8080). Запустите ОТКРЫТЬ_ЛОКАЛЬНЫЙ_СЕРВЕР.bat
+        // Эмулятор: 10.0.2.2. Реальное устройство в той же Wi‑Fi: замените на IP ПК (ipconfig), добавьте IP в res/xml/network_security_config.xml
+        buildConfigField("String", "AUTH_SERVER_URL", "\"http://10.0.2.2:3001\"")
+        buildConfigField("String", "SUPPORT_SERVER_URL", "\"http://10.0.2.2:3002\"")
+        buildConfigField("String", "SCAN_SERVER_URL", "\"http://10.0.2.2:3003\"")
+        // Сборка по ссылке (debug): сканер для теста без подписки. Сборка из магазина (release): сканер по подписке.
+        buildConfigField("Boolean", "SCANNER_REQUIRES_SUBSCRIPTION", "false")
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            buildConfigField("Boolean", "SCANNER_REQUIRES_SUBSCRIPTION", "true")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

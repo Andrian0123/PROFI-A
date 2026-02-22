@@ -3,6 +3,7 @@ package ru.profia.app.data.repository
 import ru.profia.app.data.local.datastore.PreferencesDataStore
 import ru.profia.app.data.remote.AuthAccountApi
 import ru.profia.app.data.remote.AuthSession
+import ru.profia.app.data.remote.ResetPasswordRequestResult
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,6 +38,12 @@ class AuthAccountRepository @Inject constructor(
 
     suspend fun deleteAccount(): Result<Unit> =
         authAccountApi.deleteAccount()
+
+    suspend fun requestResetPassword(loginOrEmail: String): Result<ResetPasswordRequestResult> =
+        authAccountApi.requestResetPassword(loginOrEmail)
+
+    suspend fun resetPassword(token: String, newPassword: String): Result<Unit> =
+        authAccountApi.resetPassword(token, newPassword)
 
     suspend fun logout() {
         preferencesDataStore.clearAuthSession()

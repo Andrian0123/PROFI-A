@@ -41,6 +41,8 @@ import ru.profia.app.ui.screens.BusinessTypeScreen
 import ru.profia.app.ui.screens.ChangePasswordScreen
 import ru.profia.app.ui.screens.TwoFaSettingsScreen
 import ru.profia.app.ui.screens.AuthScreen
+import ru.profia.app.ui.screens.RequestResetScreen
+import ru.profia.app.ui.screens.ResetPasswordScreen
 import ru.profia.app.ui.screens.SubscriptionScreen
 import ru.profia.app.ui.screens.SupportScreen
 import ru.profia.app.ui.screens.WorksScreen
@@ -49,6 +51,7 @@ import ru.profia.app.ui.screens.AddWorkTypesScreen
 import ru.profia.app.ui.screens.ForemanInviteScreen
 import ru.profia.app.ui.screens.LegalDocumentScreen
 import ru.profia.app.ui.screens.WorkCategoryScreen
+import ru.profia.app.ui.screens.DocumentScanScreen
 import ru.profia.app.ui.screens.EditProjectScreen
 import ru.profia.app.ui.viewmodel.AddRoomViewModel
 import ru.profia.app.ui.viewmodel.OnboardingViewModel
@@ -222,7 +225,28 @@ private fun NavContent(
                         popUpTo(NavRoutes.AUTH) { inclusive = true }
                     }
                 },
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onForgotPassword = { navController.navigate(NavRoutes.REQUEST_RESET) }
+            )
+        }
+        composable(NavRoutes.REQUEST_RESET) {
+            RequestResetScreen(
+                navController = navController,
+                onSuccessNavigateToReset = {
+                    navController.navigate(NavRoutes.RESET_PASSWORD) {
+                        popUpTo(NavRoutes.REQUEST_RESET) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(NavRoutes.RESET_PASSWORD) {
+            ResetPasswordScreen(
+                navController = navController,
+                onSuccessBackToAuth = {
+                    navController.navigate(NavRoutes.AUTH) {
+                        popUpTo(NavRoutes.RESET_PASSWORD) { inclusive = true }
+                    }
+                }
             )
         }
         composable("project/{projectId}") { backStackEntry ->
@@ -328,6 +352,7 @@ private fun NavContent(
             val projectId = backStackEntry.arguments?.getString("projectId") ?: ""
             val roomId = backStackEntry.arguments?.getString("roomId")?.takeIf { it != "new" }
             val addRoomVm: AddRoomViewModel = hiltViewModel()
+            val hasScannerAccess by subscriptionViewModel.hasScannerAccess.collectAsState(initial = true)
             AddRoomScreen(
                 navController = navController,
                 projectId = projectId,
@@ -349,7 +374,9 @@ private fun NavContent(
                     onShowSnackbar(navController.context.getString(R.string.room_saved))
                     navController.popBackStack()
                 },
-                onMenuClick = null
+                onMenuClick = null,
+                hasScannerAccess = hasScannerAccess,
+                onOpenSubscription = { navController.navigate(NavRoutes.SUBSCRIPTION) { launchSingleTop = true } }
             )
         }
         composable("room_scan/{projectId}/{roomId}") { backStackEntry ->
@@ -360,6 +387,9 @@ private fun NavContent(
                 projectId = projectId,
                 roomId = roomId
             )
+        }
+        composable(NavRoutes.DOCUMENT_SCAN) {
+            DocumentScanScreen(navController = navController, onMenuClick = onOpenDrawer)
         }
         composable(NavRoutes.CALCULATOR) {
             CalculatorScreen(navController = navController, fromProject = false, onMenuClick = onOpenDrawer)

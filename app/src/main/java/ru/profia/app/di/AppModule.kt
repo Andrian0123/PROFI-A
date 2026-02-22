@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import ru.profia.app.data.local.AppDatabase
 import ru.profia.app.data.local.MIGRATION_1_2
 import ru.profia.app.data.local.MIGRATION_2_3
@@ -95,11 +96,17 @@ object AppModule {
 
     @Provides
     @Singleton
+    @Named("scanner_requires_subscription")
+    fun provideScannerRequiresSubscription(): Boolean = ru.profia.app.BuildConfig.SCANNER_REQUIRES_SUBSCRIPTION
+
+    @Provides
+    @Singleton
     fun provideSubscriptionRepository(
         preferencesDataStore: PreferencesDataStore,
-        purchaseVerificationApi: PurchaseVerificationApi
+        purchaseVerificationApi: PurchaseVerificationApi,
+        @Named("scanner_requires_subscription") scannerRequiresSubscription: Boolean
     ): SubscriptionRepository =
-        SubscriptionRepository(preferencesDataStore, purchaseVerificationApi)
+        SubscriptionRepository(preferencesDataStore, purchaseVerificationApi, scannerRequiresSubscription)
 
     @Provides
     @Singleton

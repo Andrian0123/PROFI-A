@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +39,7 @@ import ru.profia.app.ui.viewmodel.AuthViewModel
 fun AuthScreen(
     onAuthComplete: () -> Unit,
     onBack: () -> Unit,
+    onForgotPassword: () -> Unit = {},
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     var phoneNumber by rememberSaveable { mutableStateOf("") }
@@ -109,6 +111,10 @@ fun AuthScreen(
                 text = stringResource(R.string.auth_login),
                 enabled = !isLoading && phoneNumber.isNotBlank() && password.isNotBlank()
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            TextButton(onClick = onForgotPassword) {
+                Text(stringResource(R.string.auth_forgot_password))
+            }
             Spacer(modifier = Modifier.height(12.dp))
             RoundedButton(
                 onClick = {

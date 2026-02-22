@@ -77,6 +77,9 @@ class GeneralEstimateViewModel @Inject constructor(
     private val _acts = MutableStateFlow<List<IntermediateEstimateActEntity>>(emptyList())
     val acts: StateFlow<List<IntermediateEstimateActEntity>> = _acts.asStateFlow()
 
+    suspend fun isExportDisclaimerSeen(): Boolean = preferencesRepository.isExportDisclaimerSeen()
+    suspend fun markExportDisclaimerSeen() = preferencesRepository.setExportDisclaimerSeen()
+
     private val _actItems = MutableStateFlow<List<IntermediateEstimateActItemEntity>>(emptyList())
     val actItems: StateFlow<List<IntermediateEstimateActItemEntity>> = _actItems.asStateFlow()
 

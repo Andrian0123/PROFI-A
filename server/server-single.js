@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 
 const users = new Map();
 let nextUserId = 1;
+const resetTokens = new Map();
 const supportTickets = [];
 let nextTicketId = 1;
 
@@ -117,6 +118,30 @@ const server = http.createServer(async (req, res) => {
     if (path === '/account/delete' && method === 'POST') {
       const login = findLoginByToken(req.headers.authorization) || getFirstLogin();
       if (login) users.delete(login);
+      send(200, {});
+      return;
+    }
+    if (path === '/auth/request-reset' && method === 'POST') {
+      const body = await parseJson(req);
+      const loginOrEmail = (body.login || body.email || '').trim();
+      if (!loginOrEmail) { send(400, { error: 'login or email required' }); return; }
+      const user = users.get(loginOrEmail);
+      if (!user) { send(200, { message: 'If account exists, reset instructions were sent' }); return; }
+      const token = 'reset-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+      resetTokens.set(token, { login: loginOrEmail, expires: Date.now() + 3600000 });
+      send(200, { message: 'If account exists, reset instructions were sent', resetToken: token });
+      return;
+    }
+    if (path === '/auth/reset-password' && method === 'POST') {
+      const body = await parseJson(req);
+      const token = (body.token || '').trim();
+      const newPassword = (body.newPassword || '').trim();
+      if (!token || !newPassword) { send(400, { error: 'token and newPassword required' }); return; }
+      const data = resetTokens.get(token);
+      if (!data || data.expires < Date.now()) { send(400, { error: 'Invalid or expired reset token' }); return; }
+      resetTokens.delete(token);
+      const user = users.get(data.login);
+      if (user) user.password = newPassword;
       send(200, {});
       return;
     }

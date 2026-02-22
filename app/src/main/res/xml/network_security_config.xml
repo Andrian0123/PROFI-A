@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- HTTP для локального backend. Эмулятор: 10.0.2.2. Реальное устройство: замените в build.gradle на IP ПК и при необходимости добавьте сюда свой IP. -->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <!-- Типичные IP ПК в домашней Wi‑Fi (при необходимости добавьте свой: ipconfig) -->
+        <domain includeSubdomains="true">192.168.1.100</domain>
+        <domain includeSubdomains="true">192.168.1.101</domain>
+        <domain includeSubdomains="true">192.168.0.100</domain>
+    </domain-config>
+</network-security-config>

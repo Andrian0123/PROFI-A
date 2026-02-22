@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.profia.app.R
@@ -191,6 +192,7 @@ private fun WorkGroupCard(group: WorkGroup) {
 
 @Composable
 private fun WorkItemRow(item: WorkItem) {
+    val context = LocalContext.current
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(
             item.name,
@@ -199,12 +201,12 @@ private fun WorkItemRow(item: WorkItem) {
         val priceText = when {
             item.priceMin > 0 || item.priceMax > 0 -> {
                 val range = if (item.priceMin == item.priceMax)
-                    "около ${item.priceMin} ₽/$item.unit"
+                    context.getString(R.string.works_price_about, item.priceMin, item.unit)
                 else
-                    "от ${item.priceMin} до ${item.priceMax} ₽/$item.unit"
+                    context.getString(R.string.works_price_range, item.priceMin, item.priceMax, item.unit)
                 if (item.note != null) "$range ($item.note)" else range
             }
-            item.note != null -> item.note!!
+            item.note != null -> item.note
             else -> ""
         }
         if (priceText.isNotEmpty()) {

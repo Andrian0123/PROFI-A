@@ -96,7 +96,7 @@ private fun MaterialItemRow(item: MaterialItem) {
                     "от ${item.priceMin} до ${item.priceMax} ₽/$item.unit"
                 if (item.note != null) "$range • ${item.note}" else range
             }
-            item.note != null -> item.note!!
+            item.note != null -> item.note
             else -> ""
         }
         if (priceText.isNotEmpty()) {

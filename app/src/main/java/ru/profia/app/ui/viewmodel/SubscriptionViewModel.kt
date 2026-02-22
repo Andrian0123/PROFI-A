@@ -29,6 +29,10 @@ class SubscriptionViewModel @Inject constructor(
     val trialDaysRemaining: StateFlow<Int?> = subscriptionRepository.trialDaysRemaining
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
+    /** Доступ к сканеру помещений и сканеру документов (зависит от SCANNER_REQUIRES_SUBSCRIPTION в репозитории). */
+    val hasScannerAccess: StateFlow<Boolean> = subscriptionRepository.hasScannerAccess
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+
     /** Режим подписки и авторизация обязательны с 01.06.2026. До этой даты — полный доступ без входа. */
     fun isSubscriptionRequired(): Boolean = subscriptionRepository.isSubscriptionRequiredNow()
 

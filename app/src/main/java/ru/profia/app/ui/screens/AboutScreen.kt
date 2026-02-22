@@ -47,17 +47,29 @@ fun AboutScreen(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Название: ПРОФЙ-А", style = MaterialTheme.typography.titleMedium)
-                    Text("Версия: 1.0.0", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
+                    Text(stringResource(R.string.about_app_name_line), style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.about_version_line, "1.0.0"), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
                     Text(
-                        "Цель приложения: Помощь профессионалам и частным лицам в составлении смет на строительные и ремонтные работы",
+                        stringResource(R.string.about_goal),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(top = 8.dp)
                     )
-                    Text("Дата обновления: 18.02.2026", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
-                    Text("Разработчик: ПРОФЙ-А Team", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
-                    Text("© 2026 Все права защищены", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
+                    Text(stringResource(R.string.about_update_date, "18.02.2026"), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
+                    Text(stringResource(R.string.about_developer), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
+                    Text(stringResource(R.string.about_copyright), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
                 }
+            }
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Text(
+                    stringResource(R.string.app_tool_disclaimer),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
             Card(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
@@ -66,7 +78,7 @@ fun AboutScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Text(
-                    "⚠️ Внимание: Если вы не проходили повторную авторизацию более 365 дней, ваш аккаунт автоматически удаляется.",
+                    stringResource(R.string.about_auth_warning),
                     style = MaterialTheme.typography.bodyMedium,
                     color = ErrorRed,
                     modifier = Modifier.padding(16.dp)
@@ -74,7 +86,7 @@ fun AboutScreen(
             }
             Text(
                 text = buildAnnotatedString {
-                    append("Политика конфиденциальности")
+                    append(stringResource(R.string.about_privacy_link))
                     addStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline), start = 0, end = length)
                 },
                 modifier = Modifier

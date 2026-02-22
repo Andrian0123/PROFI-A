@@ -148,7 +148,7 @@ fun SupportScreen(
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(Icons.Default.AttachFile, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                        Icon(Icons.Default.AttachFile, contentDescription = stringResource(R.string.content_desc_attach_file), modifier = Modifier.padding(end = 8.dp))
                         Text(stringResource(R.string.support_attach_file))
                     }
                     attachedFileName?.let { name ->

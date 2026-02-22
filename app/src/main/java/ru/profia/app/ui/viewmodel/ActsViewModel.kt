@@ -44,6 +44,9 @@ class ActsViewModel @Inject constructor(
     val userAccountType: StateFlow<String> = preferencesRepository.userAccountType
         .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000), "PROFI")
 
+    suspend fun isExportDisclaimerSeen(): Boolean = preferencesRepository.isExportDisclaimerSeen()
+    suspend fun markExportDisclaimerSeen() = preferencesRepository.setExportDisclaimerSeen()
+
     fun loadActs() {
         viewModelScope.launch {
             _acts.value = repository.getIntermediateEstimateActsSync(projectId)

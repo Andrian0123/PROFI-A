@@ -178,6 +178,14 @@
     <string name="company_section">Über das Unternehmen</string>
     <string name="requisites_section">Requisiten</string>
     <string name="ks2_ks3_title">KS-2 / KS-3</string>
+    <string name="form_ks2_ks3_intro">Dokument nach Form KS-2 (Abnahme) oder KS-3 (Kostenaufstellung) erstellen. Projekt und Akt wählen.</string>
+    <string name="doc_type_label">Dokumenttyp</string>
+    <string name="ks2_option">KS-2 (Akt der Abnahme der ausgeführten Arbeiten)</string>
+    <string name="ks3_option">KS-3 (Kostenaufstellung)</string>
+    <string name="act_intermediate_section">Akt (Zwischenkostenvoranschlag)</string>
+    <string name="no_acts_in_project">In diesem Projekt sind keine Akte gespeichert.</string>
+    <string name="export_format_pdf">PDF</string>
+    <string name="export_format_csv">Excel (CSV)</string>
     <string name="account_section">Konto</string>
     <string name="change_password">Passwort ändern</string>
     <string name="reset_password">Passwort zurücksetzen</string>

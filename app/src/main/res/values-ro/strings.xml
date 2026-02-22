@@ -178,6 +178,14 @@
     <string name="company_section">Despre companie</string>
     <string name="requisites_section">Rechizite</string>
     <string name="ks2_ks3_title">KS-2 / KS-3</string>
+    <string name="form_ks2_ks3_intro">Generați documentul în format KS-2 (act de recepție) sau KS-3 (adeverință cost). Selectați proiectul și actul.</string>
+    <string name="doc_type_label">Tip document</string>
+    <string name="ks2_option">KS-2 (Act de recepție a lucrărilor executate)</string>
+    <string name="ks3_option">KS-3 (Adeverință cost)</string>
+    <string name="act_intermediate_section">Act (deviz intermediar)</string>
+    <string name="no_acts_in_project">Nu există acte salvate în acest proiect.</string>
+    <string name="export_format_pdf">PDF</string>
+    <string name="export_format_csv">Excel (CSV)</string>
     <string name="account_section">Cont</string>
     <string name="change_password">Schimbare parolă</string>
     <string name="reset_password">Resetează parola</string>

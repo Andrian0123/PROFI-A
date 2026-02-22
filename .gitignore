@@ -15,3 +15,20 @@ app/build
 .externalNativeBuild
 .cxx
 local.properties
+
+# Сборки и артефакты
+*.apk
+*.aab
+для_загрузки/
+
+# Сервер: зависимости и будущие хранилища
+server/node_modules/
+server/uploads/
+server/static/
+server/data/
+server/logs/
+
+# Временные и логи
+*.log
+*.tmp
+.cache/

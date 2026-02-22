@@ -1,5 +1,6 @@
 package ru.profia.app.data.repository
 
+import ru.profia.app.data.remote.DocumentScanResult
 import ru.profia.app.data.remote.ScanDimensionsResult
 import ru.profia.app.data.remote.ScanProcessingApi
 import java.io.File
@@ -10,6 +11,9 @@ import javax.inject.Singleton
 class ScanProcessingRepository @Inject constructor(
     private val scanProcessingApi: ScanProcessingApi
 ) {
+    suspend fun scanDocument(scanId: String, documentFile: File): Result<DocumentScanResult> =
+        scanProcessingApi.scanDocument(scanId, documentFile)
+
     suspend fun processScan(
         projectId: String,
         roomId: String,

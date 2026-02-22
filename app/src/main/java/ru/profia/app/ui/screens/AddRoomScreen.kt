@@ -105,17 +105,38 @@ private val WORK_UNIT_SUGGESTIONS = listOf(
     "т."     // точка
 )
 
-private val WORK_TYPE_SECTIONS = listOf(
-    "Потолок",
-    "Стены",
-    "Пол",
-    "Сантехника",
-    "Электрика",
-    "Двери",
-    "Окна",
-    "Вентиляция",
-    "Прочие работы"
+/** Ключи секций видов работ (локализованные названия — через stringResource в Composable). */
+private val SECTION_KEYS = listOf(
+    "ceiling", "walls", "floor", "plumbing", "electrical", "doors", "windows", "ventilation", "other"
 )
+
+/** Нормализация категории из БД (старые русские названия или уже ключи) в ключ секции. */
+private fun sectionKeyFromLoadedCategory(category: String): String = when (category) {
+    "Потолок" -> "ceiling"
+    "Стены" -> "walls"
+    "Пол" -> "floor"
+    "Сантехника" -> "plumbing"
+    "Электрика" -> "electrical"
+    "Двери" -> "doors"
+    "Окна" -> "windows"
+    "Вентиляция" -> "ventilation"
+    "Прочие работы" -> "other"
+    else -> category
+}
+
+@Composable
+private fun sectionDisplayName(sectionKey: String): String = when (sectionKey) {
+    "ceiling" -> stringResource(R.string.work_category_ceiling)
+    "walls" -> stringResource(R.string.work_category_walls)
+    "floor" -> stringResource(R.string.work_category_floor)
+    "plumbing" -> stringResource(R.string.work_category_plumbing)
+    "electrical" -> stringResource(R.string.work_category_electrical)
+    "doors" -> stringResource(R.string.work_category_doors)
+    "windows" -> stringResource(R.string.work_category_windows)
+    "ventilation" -> stringResource(R.string.work_category_ventilation)
+    "other" -> stringResource(R.string.work_category_other)
+    else -> sectionKey
+}
 
 private data class WorkItem(
     val name: String,
@@ -134,7 +155,9 @@ fun AddRoomScreen(
     addRoomViewModel: AddRoomViewModel,
     onSave: (RoomFormData, List<OpeningFormData>, Map<String, List<RoomWorkItemForm>>) -> Unit,
     onMenuClick: (() -> Unit)? = null,
-    isReadOnly: Boolean = false
+    isReadOnly: Boolean = false,
+    hasScannerAccess: Boolean = true,
+    onOpenSubscription: () -> Unit = {}
 ) {
     val isEditMode = roomId != null
     val canEdit = !isReadOnly
@@ -200,7 +223,7 @@ fun AddRoomScreen(
     var editingIndex by remember { mutableStateOf<Int?>(null) }
     val workItemsByCategory = remember {
         mutableStateMapOf<String, MutableList<WorkItem>>().apply {
-            WORK_TYPE_SECTIONS.forEach { put(it, mutableStateListOf()) }
+            SECTION_KEYS.forEach { put(it, mutableStateListOf()) }
         }
     }
     val openings = remember { mutableStateListOf<OpeningFormData>() }
@@ -256,7 +279,8 @@ fun AddRoomScreen(
     LaunchedEffect(initialWorkItems) {
         if (isEditMode && !hasAppliedWorkItems && initialWorkItems != null) {
             initialWorkItems!!.forEach { (category, list) ->
-                val targetList = workItemsByCategory.getOrPut(category) { mutableStateListOf() }
+                val key = sectionKeyFromLoadedCategory(category)
+                val targetList = workItemsByCategory.getOrPut(key) { mutableStateListOf() }
                 targetList.clear()
                 list.forEach { form ->
                     targetList.add(WorkItem(form.name, form.unitAbbr, form.price, form.quantity))
@@ -573,9 +597,9 @@ fun AddRoomScreen(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     // Кнопки «Добавить откос» и «Добавить короба» удалены по требованию
-                    WORK_TYPE_SECTIONS.forEach { sectionName ->
-                        val isExpanded = expandedWorkSection == sectionName
-                        val items = workItemsByCategory[sectionName] ?: emptyList<WorkItem>()
+                    SECTION_KEYS.forEach { sectionKey ->
+                        val isExpanded = expandedWorkSection == sectionKey
+                        val items = workItemsByCategory[sectionKey] ?: emptyList<WorkItem>()
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
@@ -586,15 +610,15 @@ fun AddRoomScreen(
                                         .fillMaxWidth()
                                         .clickable {
                                             val expanding = !isExpanded
-                                            expandedWorkSection = if (isExpanded) null else sectionName
+                                            expandedWorkSection = if (isExpanded) null else sectionKey
                                             if (expanding) {
-                                                workQty = when (sectionName) {
-                                                    "Потолок" -> if (effectiveCeilingArea > 0) "%.2f".format(effectiveCeilingArea) else ""
-                                                    "Пол" -> if (effectiveFloorArea > 0) "%.2f".format(effectiveFloorArea) else ""
-                                                    "Стены" -> if (effectiveWallArea > 0) "%.2f".format(effectiveWallArea) else ""
+                                                workQty = when (sectionKey) {
+                                                    "ceiling" -> if (effectiveCeilingArea > 0) "%.2f".format(effectiveCeilingArea) else ""
+                                                    "floor" -> if (effectiveFloorArea > 0) "%.2f".format(effectiveFloorArea) else ""
+                                                    "walls" -> if (effectiveWallArea > 0) "%.2f".format(effectiveWallArea) else ""
                                                     else -> workQty
                                                 }
-                                                if (sectionName == "Потолок" || sectionName == "Пол" || sectionName == "Стены") workUnit = "кв.м."
+                                                if (sectionKey == "ceiling" || sectionKey == "floor" || sectionKey == "walls") workUnit = "кв.м."
                                             }
                                         }
                                         .padding(horizontal = 12.dp, vertical = 10.dp),
@@ -602,7 +626,7 @@ fun AddRoomScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        sectionName,
+                                        sectionDisplayName(sectionKey),
                                         style = MaterialTheme.typography.bodyMedium
                                     )
                                     Icon(
@@ -617,7 +641,7 @@ fun AddRoomScreen(
                                             .fillMaxWidth()
                                             .padding(horizontal = 12.dp, vertical = 0.dp)
                                     ) {
-                                        val templatesForSection = workTemplates.filter { it.category == sectionName }
+                                        val templatesForSection = workTemplates.filter { it.category == sectionDisplayName(sectionKey) }
                                         if (templatesForSection.isNotEmpty()) {
                                             Text(
                                                 stringResource(R.string.add_room_from_templates),
@@ -645,7 +669,7 @@ fun AddRoomScreen(
                                             }
                                         }
                                         val suggestedForSection = suggestedWorkItems
-                                            .filter { it.category == sectionName && suggestedKey(it) !in usedSuggestedKeys }
+                                            .filter { it.category == sectionDisplayName(sectionKey) && suggestedKey(it) !in usedSuggestedKeys }
                                         if (suggestedForSection.isNotEmpty()) {
                                             Text(
                                                 stringResource(R.string.add_room_from_other_rooms),
@@ -663,11 +687,11 @@ fun AddRoomScreen(
                                                     TextButton(
                                                         onClick = {
                                                             usedSuggestedKeys = usedSuggestedKeys + suggestedKey(item)
-                                                            val list = workItemsByCategory[item.category] ?: return@TextButton
-                                                            val qty = when (item.category) {
-                                                                "Потолок" -> if (effectiveCeilingArea > 0) effectiveCeilingArea else 1.0
-                                                                "Стены" -> if (effectiveWallArea > 0) effectiveWallArea else 1.0
-                                                                "Пол" -> if (effectiveFloorArea > 0) effectiveFloorArea else 1.0
+                                                            val list = workItemsByCategory[sectionKey] ?: return@TextButton
+                                                            val qty = when (sectionKey) {
+                                                                "ceiling" -> if (effectiveCeilingArea > 0) effectiveCeilingArea else 1.0
+                                                                "walls" -> if (effectiveWallArea > 0) effectiveWallArea else 1.0
+                                                                "floor" -> if (effectiveFloorArea > 0) effectiveFloorArea else 1.0
                                                                 else -> 1.0
                                                             }
                                                             list.add(
@@ -764,7 +788,7 @@ fun AddRoomScreen(
                                             )
                                         }
                                         RoundedButton(
-                                            text = if (editingSectionName == sectionName && editingIndex != null) stringResource(R.string.save) else stringResource(R.string.add_room_add_btn),
+                                            text = if (editingSectionName == sectionKey && editingIndex != null) stringResource(R.string.save) else stringResource(R.string.add_room_add_btn),
                                             enabled = canEdit,
                                             onClick = {
                                                 val priceNum = workPrice.replace(",", ".").toDoubleOrNull()
@@ -783,8 +807,8 @@ fun AddRoomScreen(
                                                             price = priceNum,
                                                             quantity = qtyNum
                                                         )
-                                                        val list = workItemsByCategory[sectionName]
-                                                        if (editingSectionName == sectionName && editingIndex != null && list != null && editingIndex!! < list.size) {
+                                                        val list = workItemsByCategory[sectionKey]
+                                                        if (editingSectionName == sectionKey && editingIndex != null && list != null && editingIndex!! < list.size) {
                                                             list[editingIndex!!] = newItem
                                                             editingSectionName = null
                                                             editingIndex = null
@@ -792,15 +816,15 @@ fun AddRoomScreen(
                                                             list?.add(newItem)
                                                         }
                                                         workName = ""
-                                                        workUnit = when (sectionName) {
-                                                            "Потолок", "Стены", "Пол" -> "кв.м."
+                                                        workUnit = when (sectionKey) {
+                                                            "ceiling", "walls", "floor" -> "кв.м."
                                                             else -> ""
                                                         }
                                                         workPrice = ""
-                                                        workQty = when (sectionName) {
-                                                            "Потолок" -> if (effectiveCeilingArea > 0) "%.2f".format(effectiveCeilingArea) else ""
-                                                            "Стены" -> if (effectiveWallArea > 0) "%.2f".format(effectiveWallArea) else ""
-                                                            "Пол" -> if (effectiveFloorArea > 0) "%.2f".format(effectiveFloorArea) else ""
+                                                        workQty = when (sectionKey) {
+                                                            "ceiling" -> if (effectiveCeilingArea > 0) "%.2f".format(effectiveCeilingArea) else ""
+                                                            "walls" -> if (effectiveWallArea > 0) "%.2f".format(effectiveWallArea) else ""
+                                                            "floor" -> if (effectiveFloorArea > 0) "%.2f".format(effectiveFloorArea) else ""
                                                             else -> ""
                                                         }
                                                         focusManager.clearFocus(true)
@@ -843,7 +867,7 @@ fun AddRoomScreen(
                                                             workUnit = item.unitAbbr
                                                             workPrice = if (item.price > 0) "%.2f".format(item.price) else ""
                                                             workQty = if (item.quantity > 0) "%.2f".format(item.quantity) else ""
-                                                            editingSectionName = sectionName
+                                                            editingSectionName = sectionKey
                                                             editingIndex = index
                                                         },
                                                         enabled = canEdit
@@ -869,7 +893,7 @@ fun AddRoomScreen(
             modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.content_desc_add), modifier = Modifier.padding(end = 8.dp))
             Text(stringResource(R.string.add_opening_title))
         }
         if (openings.isNotEmpty()) {
@@ -1005,26 +1029,39 @@ fun AddRoomScreen(
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
                         Text(
-                            text = "Фото 3D комнаты",
+                            text = stringResource(R.string.add_room_scan_room_dimensions),
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
                         OutlinedButton(
                             onClick = {
-                                showPhoto3DDialog = false
-                                navController.navigate(NavRoutes.roomScan(projectId, roomId ?: "new"))
+                                if (!hasScannerAccess) {
+                                    showPhoto3DDialog = false
+                                    onOpenSubscription()
+                                } else {
+                                    showPhoto3DDialog = false
+                                    navController.navigate(NavRoutes.roomScan(projectId, roomId ?: "new"))
+                                }
                             },
                             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text(stringResource(R.string.add_room_photo_3d_create))
+                            Text(stringResource(R.string.add_room_room_scanner_btn))
                         }
                         OutlinedButton(
-                            onClick = { load3DLauncher.launch("*/*") },
+                            onClick = {
+                                if (!hasScannerAccess) {
+                                    showPhoto3DDialog = false
+                                    onOpenSubscription()
+                                } else {
+                                    showPhoto3DDialog = false
+                                    navController.navigate(NavRoutes.DOCUMENT_SCAN)
+                                }
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text(stringResource(R.string.scan_scan))
+                            Text(stringResource(R.string.add_room_document_scanner_btn))
                         }
                         OutlinedButton(
                             onClick = { load3DLauncher.launch("*/*") },

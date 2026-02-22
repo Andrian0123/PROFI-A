@@ -67,7 +67,7 @@ import ru.profia.app.ui.viewmodel.RoomScanViewModel
 import java.io.File
 
 /** Состояние экрана сканирования по алгоритму измерения помещения (Подключить → Сканировать → Анализ → Размеры). */
-private enum class ScanStep { NOT_CONNECTED, CONNECTED, SCANNING, ANALYZING, SHOW_DIMENSIONS }
+private enum class ScanStep { NOT_CONNECTED, CONNECTED, SCANNING, ANALYZING, SCAN_ERROR, SHOW_DIMENSIONS }
 
 /**
  * Экран сканирования помещения 3D (по аналогии с Polycam).
@@ -88,7 +88,9 @@ fun RoomScanScreen(
     var preliminaryWallHeight by remember { mutableStateOf<Double?>(null) }
     var preliminaryPerimeter by remember { mutableStateOf<Double?>(null) }
     var preliminaryFloorAreaM2 by remember { mutableStateOf<Double?>(null) }
+    var preliminaryCoveragePercent by remember { mutableStateOf<Double?>(null) }
     var selectedFrameFile by remember { mutableStateOf<File?>(null) }
+    var scanErrorMessage by remember { mutableStateOf<String?>(null) }
     val isServerProcessing by viewModel.serverProcessing.collectAsState()
     val scope = rememberCoroutineScope()
 
@@ -172,22 +174,40 @@ fun RoomScanScreen(
                     preliminaryWallHeight = processDimensions.wallHeightM
                     preliminaryPerimeter = processDimensions.perimeterM
                     preliminaryFloorAreaM2 = processDimensions.floorAreaM2.takeIf { it > 0.0 }
+                    preliminaryCoveragePercent = processDimensions.coveragePercentage.takeIf { it > 0.0 }
+                    frameFile.delete()
+                    selectedFrameFile = null
+                    scanStep = ScanStep.SHOW_DIMENSIONS
                 } else {
-                    val finishDimensions = viewModel.finishScanOnServer().getOrNull()
-                    preliminaryWallHeight = finishDimensions?.wallHeightM?.takeIf { it > 0.0 } ?: 2.75
-                    preliminaryPerimeter = finishDimensions?.perimeterM?.takeIf { it > 0.0 } ?: 12.4
-                    preliminaryFloorAreaM2 = finishDimensions?.floorAreaM2?.takeIf { it > 0.0 }
-                    if (processResult.isFailure) {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.scan_server_unavailable_toast),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    val finishResult = viewModel.finishScanOnServer()
+                    val finishDimensions = finishResult.getOrNull()
+                    val hasValidDimensions = finishDimensions?.wallHeightM?.let { it > 0.0 } == true ||
+                        finishDimensions?.perimeterM?.let { it > 0.0 } == true
+                    if (hasValidDimensions) {
+                        preliminaryWallHeight = finishDimensions?.wallHeightM?.takeIf { it > 0.0 } ?: 2.75
+                        preliminaryPerimeter = finishDimensions?.perimeterM?.takeIf { it > 0.0 } ?: 12.4
+                        preliminaryFloorAreaM2 = finishDimensions?.floorAreaM2?.takeIf { it > 0.0 }
+                        preliminaryCoveragePercent = finishDimensions?.coveragePercentage?.takeIf { it > 0.0 }
+                        frameFile.delete()
+                        selectedFrameFile = null
+                        scanStep = ScanStep.SHOW_DIMENSIONS
+                    } else {
+                        frameFile.delete()
+                        selectedFrameFile = null
+                        scanErrorMessage = when {
+                            processResult.isFailure && finishResult.isFailure -> {
+                                val msg = processResult.exceptionOrNull()?.message ?: ""
+                                if (msg.contains("timeout", ignoreCase = true) || msg.contains("Unable to resolve host", ignoreCase = true)) {
+                                    context.getString(R.string.scan_error_network)
+                                } else {
+                                    context.getString(R.string.scan_error_server)
+                                }
+                            }
+                            else -> context.getString(R.string.scan_server_unavailable_toast)
+                        }
+                        scanStep = ScanStep.SCAN_ERROR
                     }
                 }
-                frameFile.delete()
-                selectedFrameFile = null
-                scanStep = ScanStep.SHOW_DIMENSIONS
             }
             else -> {
                 resetCoverage()
@@ -324,6 +344,29 @@ fun RoomScanScreen(
                         )
                     }
                 }
+                ScanStep.SCAN_ERROR -> {
+                    Text(
+                        text = stringResource(R.string.scan_error_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = scanErrorMessage ?: stringResource(R.string.scan_error_server),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = {
+                            scanErrorMessage = null
+                            scanStep = ScanStep.CONNECTED
+                        },
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(stringResource(R.string.scan_retry))
+                    }
+                }
                 ScanStep.SHOW_DIMENSIONS -> {
                     Text(
                         text = stringResource(R.string.scan_preliminary_dimensions),
@@ -368,6 +411,15 @@ fun RoomScanScreen(
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
+                            preliminaryCoveragePercent?.let { pct ->
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(stringResource(R.string.scan_coverage_percent, pct), style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -398,7 +450,7 @@ fun RoomScanScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.content_desc_save_dimensions),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.padding(end = 4.dp)
                             )
@@ -476,7 +528,7 @@ private fun CameraPreviewWithGrid(
 
     Box(modifier = modifier) {
         AndroidView(
-            factory = { ctx ->
+            factory = { _ ->
                 previewView
             },
             modifier = Modifier.fillMaxSize(),

@@ -25,8 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,28 +64,34 @@ fun BaseScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopAppBar(
-                modifier = Modifier.height(76.dp),
-                title = {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        LogoSquare(size = 28.dp, showLetter = false)
-                        Text(
-                            text = "ПРОФЙ-А",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = OnPrimary,
-                            modifier = Modifier.padding(start = 6.dp),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                },
-                navigationIcon = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(76.dp)
+                    .background(Primary)
+            ) {
+                Row(
+                    modifier = Modifier.align(Alignment.Center),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    LogoSquare(size = 28.dp, showLetter = false)
+                    Text(
+                        text = title ?: stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = OnPrimary,
+                        modifier = Modifier.padding(start = 6.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Row(
                         modifier = Modifier.padding(start = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -119,31 +123,28 @@ fun BaseScreen(
                             }
                         }
                     }
-                },
-                actions = {
-                    if (showSaveButton && onSave != null) {
-                        IconButton(
-                            onClick = onSave,
-                            enabled = isSaveEnabled,
-                            modifier = Modifier.size(48.dp).padding(end = 4.dp)
-                        ) {
-                            Icon(
-                                imageVector = if (saveAsCheckIcon) Icons.Default.Check else Icons.Default.Save,
-                                contentDescription = stringResource(R.string.save),
-                                tint = if (isSaveEnabled) OnPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-                                modifier = Modifier.size(22.dp)
-                            )
+                    Row(
+                        modifier = Modifier.padding(end = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (showSaveButton && onSave != null) {
+                            IconButton(
+                                onClick = onSave,
+                                enabled = isSaveEnabled,
+                                modifier = Modifier.size(48.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (saveAsCheckIcon) Icons.Default.Check else Icons.Default.Save,
+                                    contentDescription = stringResource(R.string.save),
+                                    tint = if (isSaveEnabled) OnPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
                         }
+                        actions()
                     }
-                    actions()
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Primary,
-                    titleContentColor = OnPrimary,
-                    navigationIconContentColor = OnPrimary,
-                    actionIconContentColor = OnPrimary
-                )
-            )
+                }
+            }
         },
         containerColor = Background,
         floatingActionButton = floatingActionButton

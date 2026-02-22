@@ -148,6 +148,14 @@
     <string name="company_section">Компания туралы</string>
     <string name="requisites_section">Реквизиттер</string>
     <string name="ks2_ks3_title">КС-2 / КС-3</string>
+    <string name="form_ks2_ks3_intro">КС-2 (қабылдау актісі) немесе КС-3 (құны туралы анықтама) форматында құжат жасаңыз. Жоба мен актіні таңдаңыз.</string>
+    <string name="doc_type_label">Құжат түрі</string>
+    <string name="ks2_option">КС-2 (Орындалған жұмыстарды қабылдау актісі)</string>
+    <string name="ks3_option">КС-3 (Жұмыс пен шығын құны туралы анықтама)</string>
+    <string name="act_intermediate_section">Акті (аралық смета)</string>
+    <string name="no_acts_in_project">Жобада сақталған актілер жоқ.</string>
+    <string name="export_format_pdf">PDF</string>
+    <string name="export_format_csv">Excel (CSV)</string>
     <string name="account_section">Тіркелме</string>
     <string name="change_password">Құпия сөзді өзгерту</string>
     <string name="reset_password">Құпия сөзді қалпына келтіру</string>

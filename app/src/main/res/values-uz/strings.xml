@@ -148,6 +148,14 @@
     <string name="company_section">Kompaniya haqida</string>
     <string name="requisites_section">Rekvizitlar</string>
     <string name="ks2_ks3_title">KS-2 / KS-3</string>
+    <string name="form_ks2_ks3_intro">KS-2 (qabul akti) yoki KS-3 (narx toʻgʻrisida ma\'lumotnoma) shaklida hujjat yarating. Loyiha va aktni tanlang.</string>
+    <string name="doc_type_label">Hujjat turi</string>
+    <string name="ks2_option">KS-2 (Bajarilgan ishlar qabul akti)</string>
+    <string name="ks3_option">KS-3 (Narx va xarajatlar toʻgʻrisida ma\'lumotnoma)</string>
+    <string name="act_intermediate_section">Akt (oraliq smeta)</string>
+    <string name="no_acts_in_project">Loyihada saqlangan aktlar yoʻq.</string>
+    <string name="export_format_pdf">PDF</string>
+    <string name="export_format_csv">Excel (CSV)</string>
     <string name="account_section">Hisob</string>
     <string name="change_password">Parolni oʻzgartirish</string>
     <string name="reset_password">Parolni tiklash</string>

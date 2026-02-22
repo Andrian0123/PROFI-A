@@ -164,25 +164,55 @@ fun AddWorkTypesScreen(
             )
         }
         when (selectedTab) {
-            0 -> GeneralDataPlaceholder()
+            0 -> GeneralDataContent()
             1 -> WorkCategoriesList(
                 categories = categories,
                 onCategoryClick = { navController.navigate(NavRoutes.workCategory(it.id)) }
             )
-            2 -> MaterialsPlaceholder()
+            2 -> MaterialsContent()
         }
     }
 }
 
 @Composable
-private fun GeneralDataPlaceholder() {
-    Box(
+private fun GeneralDataContent() {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
+            .padding(24.dp)
     ) {
-        Text(stringResource(R.string.catalog_placeholder), style = MaterialTheme.typography.bodyLarge, color = TextSecondary)
+        Text(
+            text = stringResource(R.string.add_work_general_title),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Text(
+            text = stringResource(R.string.add_work_general_desc),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
+}
+
+@Composable
+private fun MaterialsContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.add_work_materials_title),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Text(
+            text = stringResource(R.string.add_work_materials_desc),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 8.dp)
+        )
     }
 }
 
@@ -243,18 +273,6 @@ private fun WorkCategoriesList(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun MaterialsPlaceholder() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(stringResource(R.string.catalog_placeholder), style = MaterialTheme.typography.bodyLarge, color = TextSecondary)
     }
 }
 

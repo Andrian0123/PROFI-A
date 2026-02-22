@@ -14,10 +14,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-/** A4 portrait (для КС-3 и общего fallback). */
-private const val PDF_PAGE_WIDTH_PORTRAIT = 595
-private const val PDF_PAGE_HEIGHT_PORTRAIT = 842
-/** A4 альбом (горизонтально) — по форме КС-2 (ГОСТ). */
+/** A4 альбом (горизонтально) — по форме КС-2/КС-3 (ГОСТ). */
 private const val PDF_PAGE_WIDTH = 842
 private const val PDF_PAGE_HEIGHT = 595
 private const val MARGIN = 36
@@ -171,7 +168,7 @@ object Ks2Ks3Export {
             // Левая колонка: Инвестор, Заказчик, Подрядчик, Стройка, Объект
             drawLeft("Инвестор (организация, адрес, телефон, факс): _________________________", paintSmall)
             drawLeft("Заказчик (Генподрядчик) (организация, адрес, телефон, факс): ___________", paintSmall)
-            drawLeft(context.getString(ru.profia.app.R.string.estimate_contractor) + " (Субподрядчик):", paintSmall)
+            drawLeft(context.getString(ru.profia.app.R.string.estimate_contractor) + " (Исполнитель):", paintSmall)
             executorLines(profile, accountType).forEach { drawLeft(it, paintSmall, 8f) }
             drawLeft("Стройка (наименование, адрес): _________________________________________", paintSmall)
             drawLeft("Объект (наименование): ${act.title.take(50)}", paintSmall)
@@ -256,7 +253,7 @@ object Ks2Ks3Export {
             FileOutputStream(file).use { doc.writeTo(it) }
             doc.close()
             file
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -324,7 +321,7 @@ object Ks2Ks3Export {
             drawLeft("по ОКПО ____________", paintSmall, 4f)
             drawLeft("Заказчик (Генподрядчик) (организация, адрес, телефон, факс): ___________", paintSmall)
             drawLeft("по ОКПО ____________", paintSmall, 4f)
-            drawLeft(context.getString(ru.profia.app.R.string.estimate_contractor) + " (Субподрядчик):", paintSmall)
+            drawLeft(context.getString(ru.profia.app.R.string.estimate_contractor) + " (Исполнитель):", paintSmall)
             executorLines(profile, accountType).forEach { drawLeft(it, paintSmall, 8f) }
             drawLeft("по ОКПО ____________", paintSmall, 4f)
             drawLeft("Стройка (наименование, адрес): ${act.title.take(45)}", paintSmall)
@@ -400,7 +397,7 @@ object Ks2Ks3Export {
             canvas.drawText("в том числе:", c2, y, paintSmall)
             y += rowH
             // Детализация — виды выполненных работ
-            items.forEachIndexed { index, item ->
+            items.forEach { item ->
                 val name = "${item.category}: ${item.name}"
                 val nameShort = if (name.length > nameMaxLen) name.take(nameMaxLen - 1) + "…" else name
                 canvas.drawText("", c1, y, paintBody)
@@ -428,12 +425,12 @@ object Ks2Ks3Export {
             canvas.drawText("%.2f".format(totalSum), c4c, y, paintBold)
             y += 12f
 
-            // Подписи: Заказчик (Генподрядчик) и Подрядчик (Субподрядчик)
+            // Подписи: Заказчик (Генподрядчик) и Исполнитель
             val sigW = (PDF_PAGE_WIDTH - 2 * MARGIN - 24f) / 2f
             val sigLeft = MARGIN_F
             val sigRight = MARGIN_F + sigW + 24f
             canvas.drawText("Заказчик (Генподрядчик)", sigLeft, y, paintSmall)
-            canvas.drawText(context.getString(ru.profia.app.R.string.estimate_contractor) + " (Субподрядчик)", sigRight, y, paintSmall)
+            canvas.drawText(context.getString(ru.profia.app.R.string.estimate_contractor) + " (Исполнитель)", sigRight, y, paintSmall)
             y += rowH + 4f
             canvas.drawText("должность ________________  подпись ________  расшифровка ________  М.П.", sigLeft, y, paintSmall)
             canvas.drawText("должность ________________  подпись ________  расшифровка ________  М.П.", sigRight, y, paintSmall)
@@ -442,7 +439,7 @@ object Ks2Ks3Export {
             FileOutputStream(file).use { doc.writeTo(it) }
             doc.close()
             file
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -505,7 +502,7 @@ object Ks2Ks3Export {
             FileOutputStream(file).use { doc.writeTo(it) }
             doc.close()
             file
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -569,7 +566,7 @@ object Ks2Ks3Export {
             sb.append(";;Итого;;;%.2f\r\n".format(totalSum))
             file.writeText(sb.toString(), Charsets.UTF_8)
             file
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

@@ -57,6 +57,7 @@ object PreferenceKeys {
     val USER_ACCOUNT_TYPE = stringPreferencesKey("user_account_type")
     val TWO_FA_ENABLED = booleanPreferencesKey("two_fa_enabled")
     val PROFILE_PHOTO_PATH = stringPreferencesKey("profile_photo_path")
+    val EXPORT_DISCLAIMER_SEEN = booleanPreferencesKey("export_disclaimer_seen")
 
     val WORK_TEMPLATES = stringPreferencesKey("work_templates")
 }
@@ -267,6 +268,13 @@ class PreferencesDataStore(private val context: Context) {
             if (path.isNullOrBlank()) prefs.remove(PreferenceKeys.PROFILE_PHOTO_PATH)
             else prefs[PreferenceKeys.PROFILE_PHOTO_PATH] = path
         }
+    }
+
+    suspend fun isExportDisclaimerSeen(): Boolean =
+        dataStore.data.first()[PreferenceKeys.EXPORT_DISCLAIMER_SEEN] ?: false
+
+    suspend fun setExportDisclaimerSeen() {
+        dataStore.edit { prefs -> prefs[PreferenceKeys.EXPORT_DISCLAIMER_SEEN] = true }
     }
 
     val workTemplatesFlow: Flow<List<WorkTemplate>> = dataStore.data.map { prefs ->

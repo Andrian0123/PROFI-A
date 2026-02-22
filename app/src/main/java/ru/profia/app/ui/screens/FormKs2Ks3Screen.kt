@@ -97,7 +97,7 @@ fun FormKs2Ks3Screen(
                         else Ks2Ks3Export.exportKs3Pdf(context, p, act, actItems, totalSum, accountType)
                     }
                     if (file != null) shareFile(file, "application/pdf")
-                    else Toast.makeText(context, "Не удалось создать файл PDF", Toast.LENGTH_LONG).show()
+                    else Toast.makeText(context, context.getString(R.string.export_pdf_failed), Toast.LENGTH_LONG).show()
                 }
             },
             onExcel = {
@@ -110,7 +110,7 @@ fun FormKs2Ks3Screen(
                         else Ks2Ks3Export.exportKs3Csv(context, p, act, actItems, totalSum, accountType)
                     }
                     if (file != null) shareFile(file, "text/csv")
-                    else Toast.makeText(context, "Не удалось создать файл CSV", Toast.LENGTH_LONG).show()
+                    else Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_LONG).show()
                 }
             }
         )
@@ -118,7 +118,7 @@ fun FormKs2Ks3Screen(
 
     BaseScreen(
         navController = navController,
-        title = "КС-2 / КС-3",
+        title = stringResource(R.string.ks2_ks3_title),
         showBackButton = true
     ) { paddingValues ->
         Column(
@@ -130,20 +130,20 @@ fun FormKs2Ks3Screen(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                "Сформировать документ по форме КС-2 (акт приёмки) или КС-3 (справка о стоимости). Выберите проект и акт.",
+                stringResource(R.string.form_ks2_ks3_intro),
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-            Text("Тип документа", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
+            Text(stringResource(R.string.doc_type_label), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 8.dp)) {
                 RadioButton(selected = docTypeKs2, onClick = { docTypeKs2 = true })
-                Text("КС-2 (Акт приёмки выполненных работ)", modifier = Modifier.clickable { docTypeKs2 = true })
+                Text(stringResource(R.string.ks2_option), modifier = Modifier.clickable { docTypeKs2 = true })
             }
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 16.dp)) {
                 RadioButton(selected = !docTypeKs2, onClick = { docTypeKs2 = false })
-                Text("КС-3 (Справка о стоимости)", modifier = Modifier.clickable { docTypeKs2 = false })
+                Text(stringResource(R.string.ks3_option), modifier = Modifier.clickable { docTypeKs2 = false })
             }
-            Text("Проект", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
+            Text(stringResource(R.string.project), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
             projects.forEach { project ->
                 val selected = project.id == selectedProjectId
                 Card(
@@ -161,9 +161,9 @@ fun FormKs2Ks3Screen(
                 }
             }
             if (selectedProjectId != null) {
-                Text("Акт (промежуточная смета)", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 4.dp))
+                Text(stringResource(R.string.act_intermediate_section), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 4.dp))
                 if (acts.isEmpty()) {
-                    Text("В проекте нет сохранённых актов.", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(8.dp))
+                    Text(stringResource(R.string.no_acts_in_project), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(8.dp))
                 } else {
                     acts.forEach { act ->
                         val selected = act.id == selectedActId
@@ -332,8 +332,8 @@ private fun Ks2Ks3FormatDialog(
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextButton(onClick = onPdf, modifier = Modifier.weight(1f)) { Text("PDF") }
-                    TextButton(onClick = onExcel, modifier = Modifier.weight(1f)) { Text("Excel (CSV)") }
+                    TextButton(onClick = onPdf, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.export_format_pdf)) }
+                    TextButton(onClick = onExcel, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.export_format_csv)) }
                 }
                 TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
             }

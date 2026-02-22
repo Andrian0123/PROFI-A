@@ -28,7 +28,16 @@ interface AuthAccountApi {
     suspend fun changePassword(oldPassword: String, newPassword: String): Result<Unit>
     suspend fun setTwoFaEnabled(enabled: Boolean): Result<Unit>
     suspend fun deleteAccount(): Result<Unit>
+    /** Запрос сброса пароля (логин или email). В ответе может быть resetToken для теста. */
+    suspend fun requestResetPassword(loginOrEmail: String): Result<ResetPasswordRequestResult>
+    /** Установка нового пароля по токену из письма/ответа request-reset. */
+    suspend fun resetPassword(token: String, newPassword: String): Result<Unit>
 }
+
+data class ResetPasswordRequestResult(
+    val message: String,
+    val resetToken: String? = null
+)
 
 @Singleton
 class DefaultAuthAccountApi @Inject constructor(
@@ -57,6 +66,63 @@ class DefaultAuthAccountApi @Inject constructor(
 
     override suspend fun deleteAccount(): Result<Unit> =
         simpleAction("/account/delete") {}
+
+    override suspend fun requestResetPassword(loginOrEmail: String): Result<ResetPasswordRequestResult> =
+        withContext(Dispatchers.IO) {
+            val baseUrl = BuildConfig.AUTH_SERVER_URL.trim().removeSuffix("/")
+            if (baseUrl.isBlank()) {
+                return@withContext Result.success(ResetPasswordRequestResult("Демо-режим: сброс пароля недоступен"))
+            }
+            val payload = JSONObject().apply {
+                put("login", loginOrEmail)
+                put("email", loginOrEmail)
+            }.toString()
+            val request = Request.Builder()
+                .url("$baseUrl/auth/request-reset")
+                .post(payload.toRequestBody(JSON_MEDIA))
+                .addHeader("Content-Type", "application/json")
+                .build()
+            runCatching {
+                client.newCall(request).execute().use { response ->
+                    val body = response.body?.string().orEmpty()
+                    if (!response.isSuccessful) {
+                        val msg = try { JSONObject(body).optString("error", "Request failed") } catch (_: Exception) { "Request failed" }
+                        return@runCatching Result.failure<ResetPasswordRequestResult>(Exception(msg))
+                    }
+                    val json = JSONObject(body.ifBlank { "{}" })
+                    val message = json.optString("message", "Инструкции отправлены на указанный адрес")
+                    val resetToken = json.optString("resetToken", "").ifBlank { null }
+                    Result.success(ResetPasswordRequestResult(message, resetToken))
+                }
+            }.getOrElse { Result.failure(it) }
+        }
+
+    override suspend fun resetPassword(token: String, newPassword: String): Result<Unit> =
+        withContext(Dispatchers.IO) {
+            val baseUrl = BuildConfig.AUTH_SERVER_URL.trim().removeSuffix("/")
+            if (baseUrl.isBlank()) {
+                return@withContext Result.failure(Exception("Демо-режим: сброс пароля недоступен"))
+            }
+            val payload = JSONObject().apply {
+                put("token", token)
+                put("newPassword", newPassword)
+            }.toString()
+            val request = Request.Builder()
+                .url("$baseUrl/auth/reset-password")
+                .post(payload.toRequestBody(JSON_MEDIA))
+                .addHeader("Content-Type", "application/json")
+                .build()
+            runCatching {
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) {
+                        val body = response.body?.string().orEmpty()
+                        val msg = try { JSONObject(body).optString("error", "Request failed") } catch (_: Exception) { "Request failed" }
+                        return@runCatching Result.failure<Unit>(Exception(msg))
+                    }
+                    Result.success(Unit)
+                }
+            }.getOrElse { Result.failure(it) }
+        }
 
     private suspend fun authRequest(
         endpoint: String,

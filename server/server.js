@@ -11,6 +11,7 @@ const url = require('url');
 // ---------- In-memory stores (dev only) ----------
 const users = new Map(); // login -> { password, userId, twoFaEnabled }
 let nextUserId = 1;
+const resetTokens = new Map(); // token -> { login, expires }
 const supportTickets = [];
 let nextTicketId = 1;
 
@@ -119,6 +120,46 @@ const authServer = http.createServer(async (req, res) => {
       return;
     }
 
+    // Сброс пароля: запрос ссылки/кода (по логину или email)
+    if (path === '/auth/request-reset' && method === 'POST') {
+      const body = await parseJson(req);
+      const loginOrEmail = (body.login || body.email || '').trim();
+      if (!loginOrEmail) {
+        send(400, { error: 'login or email required' });
+        return;
+      }
+      const user = users.get(loginOrEmail);
+      if (!user) {
+        send(200, { message: 'If account exists, reset instructions were sent' });
+        return;
+      }
+      const token = 'reset-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+      resetTokens.set(token, { login: loginOrEmail, expires: Date.now() + 3600000 });
+      send(200, { message: 'If account exists, reset instructions were sent', resetToken: token });
+      return;
+    }
+
+    // Сброс пароля по токену (новый пароль)
+    if (path === '/auth/reset-password' && method === 'POST') {
+      const body = await parseJson(req);
+      const token = (body.token || '').trim();
+      const newPassword = (body.newPassword || '').trim();
+      if (!token || !newPassword) {
+        send(400, { error: 'token and newPassword required' });
+        return;
+      }
+      const data = resetTokens.get(token);
+      if (!data || data.expires < Date.now()) {
+        send(400, { error: 'Invalid or expired reset token' });
+        return;
+      }
+      resetTokens.delete(token);
+      const user = users.get(data.login);
+      if (user) user.password = newPassword;
+      send(200, {});
+      return;
+    }
+
     send(404, { error: 'Not found' });
   } catch (e) {
     send(500, { error: String(e.message) });
@@ -219,6 +260,27 @@ const scanServer = http.createServer(async (req, res) => {
     } catch (e) {
       send(500, { error: String(e.message) });
     }
+    return;
+  }
+
+  if (path === '/api/v1/scan/document' && method === 'POST') {
+    let raw = [];
+    req.on('data', chunk => raw.push(chunk));
+    req.on('end', () => {
+      const buf = Buffer.concat(raw);
+      const parsedForm = multipart.parse(buf, req.headers['content-type']);
+      const scanId = (parsedForm.fields && parsedForm.fields.scan_id && parsedForm.fields.scan_id.value) || 'doc-1';
+      send(200, {
+        scan_id: scanId,
+        width_mm: 210,
+        length_mm: 297,
+        content: [
+          { label: 'схема', confidence: 0.7 },
+          { label: 'текст', confidence: 0.85 }
+        ],
+        has_engineering_communications: false
+      });
+    });
     return;
   }
 

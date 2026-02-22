@@ -148,6 +148,14 @@
     <string name="company_section">Дар бораи ширкат</string>
     <string name="requisites_section">Реквизитҳо</string>
     <string name="ks2_ks3_title">КС-2 / КС-3</string>
+    <string name="form_ks2_ks3_intro">Ҳуҷҷатро дар шакли КС-2 (акти қабул) ё КС-3 (гузориши арзиш) таҳия кунед. Лоиҳа ва актро интихоб кунед.</string>
+    <string name="doc_type_label">Навъи ҳуҷҷат</string>
+    <string name="ks2_option">КС-2 (Акти қабули корҳои иҷрошуда)</string>
+    <string name="ks3_option">КС-3 (Гузориши арзиши корҳо ва харҷот)</string>
+    <string name="act_intermediate_section">Акт (баҳодиҳии миёна)</string>
+    <string name="no_acts_in_project">Дар лоиҳа актҳои захирашуда нестанд.</string>
+    <string name="export_format_pdf">PDF</string>
+    <string name="export_format_csv">Excel (CSV)</string>
     <string name="account_section">Ҳисоб</string>
     <string name="change_password">Тағйири парол</string>
     <string name="reset_password">Паролро бозсозӣ кунед</string>

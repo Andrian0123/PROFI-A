@@ -37,6 +37,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -65,6 +66,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import android.content.Intent
 import android.widget.Toast
 import ru.profia.app.ui.export.EstimateExport
+import ru.profia.app.ui.navigation.NavRoutes
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ru.profia.app.data.local.entity.IntermediateEstimateActEntity
@@ -96,6 +98,8 @@ fun GeneralEstimateScreen(
     var expandedMenuId by remember { mutableStateOf<String?>(null) }
     var editDialogItem by remember { mutableStateOf<EstimateItemUi?>(null) }
     var shareMenuExpanded by remember { mutableStateOf(false) }
+    var showExportDisclaimerDialog by remember { mutableStateOf(false) }
+    var pendingExportAfterDisclaimer by remember { mutableStateOf<String?>(null) }
     var selectionMode by remember { mutableStateOf(false) }
     val selectedIds = remember { mutableStateSetOf<String>() }
     val context = LocalContext.current
@@ -134,6 +138,71 @@ fun GeneralEstimateScreen(
                 type = mimeType
                 putExtra(Intent.EXTRA_STREAM, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+        )
+    }
+
+    fun runExport(type: String) {
+        scope.launch {
+            val prefix = if (isFinalEstimate) "itog_smeta" else "smeta"
+            val executorLabel = context.getString(R.string.estimate_contractor)
+            val customerLines = buildCustomerLines(project)
+            val executorLines = buildExecutorLines(userProfile, userAccountType, executorLabel)
+            val titleResId = if (isFinalEstimate) R.string.final_estimate else R.string.preliminary_estimate
+            when (type) {
+                "pdf" -> {
+                    val file = withContext(Dispatchers.IO) {
+                        EstimateExport.exportToPdf(
+                            context, sections, totalSum,
+                            title = titleEstimate, filePrefix = prefix,
+                            customerLines = customerLines, executorLines = executorLines,
+                            exportLocale = selectedExportLocale, titleResId = titleResId
+                        )
+                    }
+                    if (file != null) shareFile(file, "application/pdf")
+                    else Toast.makeText(context, context.getString(R.string.export_pdf_failed), Toast.LENGTH_LONG).show()
+                }
+                "csv" -> {
+                    val file = withContext(Dispatchers.IO) {
+                        EstimateExport.exportToCsv(
+                            context, sections, totalSum,
+                            title = titleEstimate, filePrefix = prefix,
+                            customerLines = customerLines, executorLines = executorLines,
+                            exportLocale = selectedExportLocale, titleResId = titleResId
+                        )
+                    }
+                    if (file != null) shareFile(file, "text/csv")
+                    else Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    if (showExportDisclaimerDialog) {
+        AlertDialog(
+            onDismissRequest = { showExportDisclaimerDialog = false; pendingExportAfterDisclaimer = null },
+            title = { Text(stringResource(R.string.export_disclaimer_dialog_title)) },
+            text = { Text(stringResource(R.string.export_disclaimer_dialog_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch { viewModel.markExportDisclaimerSeen() }
+                        showExportDisclaimerDialog = false
+                        val toRun = pendingExportAfterDisclaimer
+                        pendingExportAfterDisclaimer = null
+                        toRun?.let { runExport(it) }
+                    }
+                ) { Text(stringResource(R.string.export_disclaimer_dialog_ok)) }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch { viewModel.markExportDisclaimerSeen() }
+                        showExportDisclaimerDialog = false
+                        pendingExportAfterDisclaimer = null
+                        navController.navigate(NavRoutes.ABOUT) { launchSingleTop = true }
+                    }
+                ) { Text(stringResource(R.string.export_disclaimer_dialog_more)) }
             }
         )
     }
@@ -182,26 +251,16 @@ fun GeneralEstimateScreen(
                         expanded = shareMenuExpanded,
                         onDismissRequest = { shareMenuExpanded = false }
                     ) {
-                        val executorLabel = stringResource(R.string.estimate_contractor)
                         DropdownMenuItem(
                             text = { Text("PDF") },
                             onClick = {
                                 shareMenuExpanded = false
                                 scope.launch {
-                                    val prefix = if (isFinalEstimate) "itog_smeta" else "smeta"
-                                    val customerLines = buildCustomerLines(project)
-                                    val executorLines = buildExecutorLines(userProfile, userAccountType, executorLabel)
-                                    val titleResId = if (isFinalEstimate) R.string.final_estimate else R.string.preliminary_estimate
-                                    val file = withContext(Dispatchers.IO) {
-                                        EstimateExport.exportToPdf(
-                                            context, sections, totalSum,
-                                            title = titleEstimate, filePrefix = prefix,
-                                            customerLines = customerLines, executorLines = executorLines,
-                                            exportLocale = selectedExportLocale, titleResId = titleResId
-                                        )
+                                    if (viewModel.isExportDisclaimerSeen()) runExport("pdf")
+                                    else {
+                                        showExportDisclaimerDialog = true
+                                        pendingExportAfterDisclaimer = "pdf"
                                     }
-                                    if (file != null) shareFile(file, "application/pdf")
-                                    else Toast.makeText(context, context.getString(R.string.export_pdf_failed), Toast.LENGTH_LONG).show()
                                 }
                             }
                         )
@@ -210,20 +269,11 @@ fun GeneralEstimateScreen(
                             onClick = {
                                 shareMenuExpanded = false
                                 scope.launch {
-                                    val prefix = if (isFinalEstimate) "itog_smeta" else "smeta"
-                                    val customerLines = buildCustomerLines(project)
-                                    val executorLines = buildExecutorLines(userProfile, userAccountType, executorLabel)
-                                    val titleResId = if (isFinalEstimate) R.string.final_estimate else R.string.preliminary_estimate
-                                    val file = withContext(Dispatchers.IO) {
-                                        EstimateExport.exportToCsv(
-                                            context, sections, totalSum,
-                                            title = titleEstimate, filePrefix = prefix,
-                                            customerLines = customerLines, executorLines = executorLines,
-                                            exportLocale = selectedExportLocale, titleResId = titleResId
-                                        )
+                                    if (viewModel.isExportDisclaimerSeen()) runExport("csv")
+                                    else {
+                                        showExportDisclaimerDialog = true
+                                        pendingExportAfterDisclaimer = "csv"
                                     }
-                                    if (file != null) shareFile(file, "text/csv")
-                                    else Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_LONG).show()
                                 }
                             }
                         )
@@ -488,11 +538,11 @@ internal fun buildCustomerLines(project: ProjectData?): List<String>? {
 }
 
 /**
- * Строки блока «Подрядчик» (исполнитель) для экспорта.
- * @param executorLabel Заголовок блока (например из R.string.estimate_contractor).
+* Строки блока «Исполнитель» для экспорта.
+     * @param executorLabel Заголовок блока (например из R.string.estimate_contractor).
  * @param accountType PROFI — только профиль (ФИО, тел., email); BUSINESS — профиль + компания + реквизиты.
  */
-internal fun buildExecutorLines(profile: UserProfile?, accountType: String?, executorLabel: String = "Подрядчик"): List<String>? {
+internal fun buildExecutorLines(profile: UserProfile?, accountType: String?, executorLabel: String = "Исполнитель"): List<String>? {
     if (profile == null) return null
     val lines = mutableListOf<String>()
     lines.add(executorLabel)

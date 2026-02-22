@@ -30,6 +30,9 @@
     <string name="add_room_room_name_label">Room name</string>
     <string name="add_room_edit_params">Edit room parameters</string>
     <string name="add_room_photo_3d">3D photo</string>
+    <string name="add_room_scan_room_dimensions">Room scanner — dimension detection</string>
+    <string name="add_room_room_scanner_btn">Room scanner</string>
+    <string name="add_room_document_scanner_btn">Document scanner</string>
     <string name="add_room_length">Length</string>
     <string name="add_room_width">Width</string>
     <string name="add_room_height">Height</string>
@@ -76,6 +79,7 @@
     <string name="unsaved_changes_message">You have unsaved changes. Save before leaving?</string>
     <string name="exit_without_saving">Exit without saving</string>
     <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
     
     <!-- Navigation -->
     <string name="projects">Projects</string>
@@ -133,6 +137,26 @@
     <string name="subscription">Subscription</string>
     <string name="support">Support</string>
     <string name="about">About</string>
+    <string name="share_app">Share app</string>
+    <string name="share_app_text">Download PROFI-A for estimates and acts: https://play.google.com/store/apps/details?id=ru.profia.app</string>
+    <string name="about_app_name_line">Name: PROFI-A</string>
+    <string name="about_version_line">Version: %1$s</string>
+    <string name="about_goal">App goal: Help professionals and individuals prepare estimates for construction and renovation work</string>
+    <string name="about_update_date">Last updated: %1$s</string>
+    <string name="about_developer">Developer: PROFI-A Team</string>
+    <string name="about_copyright">© 2026 All rights reserved</string>
+    <string name="about_auth_warning">⚠️ Notice: If you have not re-authenticated for more than 365 days, your account will be automatically deleted.</string>
+    <string name="app_tool_disclaimer">PROFI-A is an auxiliary tool for preparing estimates and calculations. All estimates and calculations are indicative. The app operator is not liable for users\' decisions or actions based on data obtained in the app.</string>
+    <string name="export_disclaimer_footer">Estimate prepared in PROFI-A as an auxiliary tool. Indicative only. The user is responsible for how the data is used.</string>
+    <string name="export_disclaimer_footer_line1">Estimate prepared in PROFI-A as an auxiliary tool.</string>
+    <string name="export_disclaimer_footer_line2">Indicative only. The user is responsible for how the data is used.</string>
+    <string name="export_disclaimer_dialog_title">Reminder</string>
+    <string name="export_disclaimer_dialog_message">Estimates prepared in the app are indicative. The user is responsible for how the data is used.</string>
+    <string name="export_disclaimer_dialog_ok">Got it</string>
+    <string name="export_disclaimer_dialog_more">Learn more</string>
+    <string name="about_privacy_link">Privacy policy</string>
+    <string name="works_price_about">about %1$.0f ₽/%2$s</string>
+    <string name="works_price_range">from %1$.0f to %2$.0f ₽/%3$s</string>
     <string name="my_profile">Profile</string>
     <string name="my_projects">My projects</string>
     <string name="add_foreman">Add foreman / worker</string>
@@ -154,6 +178,10 @@
     <string name="stages_catalog">Work stages catalog</string>
     <string name="stages_catalog_hint">Typical order of renovation/construction stages. Use when planning estimates.</string>
     <string name="catalog_placeholder">Section in development. Reference data list will appear here.</string>
+    <string name="add_work_general_title">Estimate general data</string>
+    <string name="add_work_general_desc">Object name, customer and details are set in the project card and profile (sole proprietor/LLC). Here you see work categories and added items.</string>
+    <string name="add_work_materials_title">Materials</string>
+    <string name="add_work_materials_desc">Materials are accounted for in work types per room. Add works in the «Work types» tab — material usage can be specified in the item name or notes.</string>
     <string name="settings_support">Settings &amp; support</string>
     <string name="menu_documents">Documents</string>
     <string name="menu_agreement">Agreement</string>
@@ -167,6 +195,8 @@
     <string name="no_rooms">No rooms</string>
     <string name="add_room_button">Add room</string>
     <string name="add_room_button_short">Add room</string>
+    <string name="add_room_add_floor">Add floor</string>
+    <string name="add_room_floor_toggle">Floor</string>
     <string name="floor_area">Floor area</string>
     <string name="wall_area">Wall area</string>
     <string name="subscription_banner">Subscribe for full access to all features</string>
@@ -246,6 +276,10 @@
     <string name="content_desc_edit">Edit</string>
     <string name="content_desc_delete">Delete</string>
     <string name="content_desc_add_work">Add work</string>
+    <string name="content_desc_save_dimensions">Save dimensions</string>
+    <string name="content_desc_pick_photo">Pick photo</string>
+    <string name="content_desc_attach_file">Attach file</string>
+    <string name="content_desc_forward">Go</string>
     <string name="add_opening_title">Add opening</string>
     <string name="add_opening_type">Type</string>
     <string name="add_opening_door">Door</string>
@@ -284,7 +318,7 @@
     <string name="estimate_col_sum">Sum</string>
     <string name="estimate_total_per_room">Total per room</string>
     <string name="estimate_customer">Customer</string>
-    <string name="estimate_contractor">Contractor</string>
+    <string name="estimate_contractor">Executor</string>
     <string name="estimate_discount_line">Discount: %s</string>
     <string name="estimate_csv_header">Room;Section;Name;Qty;Unit;Price, ₽;Sum, ₽</string>
     <string name="estimate_language">Estimate language</string>
@@ -317,6 +351,8 @@
     <string name="profile_bik">BIC: %1$s</string>
     <string name="profile_ks2_ks3_desc">Generate acceptance certificate (KS-2) or cost statement (KS-3) in PDF or Excel.</string>
     <string name="profile_form_ks2_ks3_btn">Generate KS-2 / KS-3</string>
+    <string name="generate_and_share">Generate and share</string>
+    <string name="choose_format_and_share">Choose format — file will be generated and offered for sharing</string>
     <string name="company_section">Company</string>
     <string name="edit_profile_section_title_profile">Edit profile</string>
     <string name="edit_profile_section_title_company">Edit company</string>
@@ -340,6 +376,14 @@
     <string name="edit_profile_error_inn">Enter INN</string>
     <string name="requisites_section">Requisites</string>
     <string name="ks2_ks3_title">KS-2 / KS-3</string>
+    <string name="form_ks2_ks3_intro">Generate a document in KS-2 (acceptance certificate) or KS-3 (cost statement) format. Select project and act.</string>
+    <string name="doc_type_label">Document type</string>
+    <string name="ks2_option">KS-2 (Acceptance certificate for completed work)</string>
+    <string name="ks3_option">KS-3 (Cost statement)</string>
+    <string name="act_intermediate_section">Act (intermediate estimate)</string>
+    <string name="no_acts_in_project">No saved acts in this project.</string>
+    <string name="export_format_pdf">PDF</string>
+    <string name="export_format_csv">Excel (CSV)</string>
     <string name="account_section">Account</string>
     <string name="change_password">Change password</string>
     <string name="reset_password">Reset password</string>
@@ -379,6 +423,21 @@
     <string name="change_password_error_min_length">New password must be at least 6 characters</string>
     <string name="change_password_error_mismatch">Passwords do not match</string>
     <string name="auth_error_default">Authentication failed</string>
+    <string name="auth_forgot_password">Forgot password?</string>
+    <string name="reset_request_title">Reset password</string>
+    <string name="reset_request_subtitle">Enter login or email — we will send reset instructions</string>
+    <string name="reset_request_login_hint">Login or email</string>
+    <string name="reset_request_send">Send</string>
+    <string name="reset_request_sent">Instructions sent. Check your email or copy the code below (for testing).</string>
+    <string name="reset_request_go_to_code">Enter code and new password</string>
+    <string name="reset_password_title">New password</string>
+    <string name="reset_password_subtitle">Enter the code from the email and your new password</string>
+    <string name="reset_password_token_hint">Reset code</string>
+    <string name="reset_password_new_hint">New password</string>
+    <string name="reset_password_confirm_hint">Confirm password</string>
+    <string name="reset_password_submit">Save password</string>
+    <string name="reset_password_success">Password changed successfully. Sign in with your new password.</string>
+    <string name="reset_password_mismatch">Passwords do not match</string>
     <string name="change_password_error_default">Failed to change password</string>
 
     <!-- Support -->
@@ -411,17 +470,37 @@
     <string name="scan_stop">Stop</string>
     <string name="scan_constraints">Capture within 1.5 m from floor and 2 m from wall. Mark construction areas on the plan.</string>
     <string name="scan_mark_on_plan">Mark areas on plan</string>
+    <string name="scan_mark_on_plan_coming_soon">«Mark areas on plan» feature is in development</string>
     <string name="scan_analyzing">Analyzing with video scanner…</string>
     <string name="scan_preliminary_dimensions">Preliminary dimensions</string>
     <string name="scan_wall_height">Wall height</string>
     <string name="scan_wall_width_perimeter">Wall width along perimeter</string>
     <string name="scan_3d_hint">3D project: floor/ceiling junctions, vertical inner corners, windows, doors.</string>
     <string name="scan_instruction">Scan the room: point the camera at floor, ceiling, corners and doors</string>
-    <string name="scan_title">Scanning</string>
-    <string name="scan_subtitle">Room scanning for automatic dimension detection</string>
+    <string name="scan_title">Room scanner</string>
+    <string name="scan_subtitle">Detect room dimensions: wall height, perimeter, floor area</string>
     <string name="scan_server_unavailable_toast">Scan server unavailable, showing local estimates</string>
+    <string name="scan_error_title">Analysis error</string>
+    <string name="scan_error_network">Server unavailable. Check your connection and try again.</string>
+    <string name="scan_error_server">Server error. Please try again later.</string>
+    <string name="scan_retry">Retry</string>
+    <string name="scan_coverage_percent">Scan coverage: %1$.0f%%</string>
     <string name="scan_no_camera_access">No camera access</string>
     <string name="scan_pick_file_error">Could not open selected file</string>
+
+    <!-- Document scanner -->
+    <string name="doc_scan_title">Document scanner</string>
+    <string name="doc_scan_subtitle">Detect document dimensions (mm) and recognize content</string>
+    <string name="doc_scan_pick">Pick document photo</string>
+    <string name="doc_scan_analyzing">Analyzing document…</string>
+    <string name="doc_scan_result">Result</string>
+    <string name="doc_scan_size">Size: %1$.0f × %2$.0f mm</string>
+    <string name="doc_scan_engineering">Engineering communications detected</string>
+    <string name="doc_scan_content">Content</string>
+    <string name="doc_scan_content_item">%1$s (%2$.0f%%)</string>
+    <string name="doc_scan_error">Error: %1$s</string>
+    <string name="doc_scan_server_unavailable">Scan server unavailable</string>
+    <string name="menu_document_scan">Document scanner (dimensions)</string>
 
     <!-- Work category reference (WorkCategoryScreen) -->
     <string name="work_ref_plaster">Plastering</string>

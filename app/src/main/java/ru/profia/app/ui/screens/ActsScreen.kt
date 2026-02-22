@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -60,6 +61,7 @@ import ru.profia.app.ui.theme.Divider
 import ru.profia.app.ui.theme.Primary
 import ru.profia.app.ui.theme.TextPrimary
 import ru.profia.app.ui.export.EstimateExport
+import ru.profia.app.ui.navigation.NavRoutes
 import ru.profia.app.ui.viewmodel.ActsViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -102,6 +104,36 @@ fun ActsScreen(
     var customDiscountPercent by remember { mutableStateOf("") }
     var customTaxPercent by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+    var showExportDisclaimerDialog by remember { mutableStateOf(false) }
+    var pendingExportAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+
+    if (showExportDisclaimerDialog) {
+        AlertDialog(
+            onDismissRequest = { showExportDisclaimerDialog = false; pendingExportAction = null },
+            title = { Text(stringResource(R.string.export_disclaimer_dialog_title)) },
+            text = { Text(stringResource(R.string.export_disclaimer_dialog_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch { viewModel.markExportDisclaimerSeen() }
+                        showExportDisclaimerDialog = false
+                        pendingExportAction?.invoke()
+                        pendingExportAction = null
+                    }
+                ) { Text(stringResource(R.string.export_disclaimer_dialog_ok)) }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch { viewModel.markExportDisclaimerSeen() }
+                        showExportDisclaimerDialog = false
+                        pendingExportAction = null
+                        navController.navigate(NavRoutes.ABOUT) { launchSingleTop = true }
+                    }
+                ) { Text(stringResource(R.string.export_disclaimer_dialog_more)) }
+            }
+        )
+    }
 
     LaunchedEffect(projectId) {
         viewModel.loadActs()
@@ -143,41 +175,55 @@ fun ActsScreen(
             viewModel = viewModel,
             onDismiss = { selectedAct = null },
             onSharePdf = {
-                val customerLines = buildCustomerLines(project)
-                val executorLines = buildExecutorLines(userProfile, userAccountType, executorLabel)
-                val total = actItems.sumOf { it.total }
-                val discountText = discountDisplayText()
-                val taxText = taxDisplayText()
-                scope.launch {
-                    val file = withContext(Dispatchers.IO) {
-                        EstimateExport.exportActToPdf(
-                            context, act.title, actItems, total,
-                            customerLines = customerLines, executorLines = executorLines,
-                            discountText = discountText, taxPercentText = taxText,
-                            exportLocale = selectedEstimateLocale
-                        )
+                val doExport: () -> Unit = {
+                    val customerLines = buildCustomerLines(project)
+                    val executorLines = buildExecutorLines(userProfile, userAccountType, executorLabel)
+                    val total = actItems.sumOf { it.total }
+                    val discountText = discountDisplayText()
+                    val taxText = taxDisplayText()
+                    scope.launch {
+                        val file = withContext(Dispatchers.IO) {
+                            EstimateExport.exportActToPdf(
+                                context, act.title, actItems, total,
+                                customerLines = customerLines, executorLines = executorLines,
+                                discountText = discountText, taxPercentText = taxText,
+                                exportLocale = selectedEstimateLocale
+                            )
+                        }
+                        if (file != null) shareFile(file, "application/pdf")
+                        else Toast.makeText(context, context.getString(R.string.export_pdf_failed), Toast.LENGTH_LONG).show()
                     }
-                    if (file != null) shareFile(file, "application/pdf")
-                    else Toast.makeText(context, context.getString(R.string.export_pdf_failed), Toast.LENGTH_LONG).show()
+                    Unit
+                }
+                scope.launch {
+                    if (viewModel.isExportDisclaimerSeen()) doExport()
+                    else { showExportDisclaimerDialog = true; pendingExportAction = doExport }
                 }
             },
             onShareExcel = {
-                val customerLines = buildCustomerLines(project)
-                val executorLines = buildExecutorLines(userProfile, userAccountType, executorLabel)
-                val total = actItems.sumOf { it.total }
-                val discountText = discountDisplayText()
-                val taxText = taxDisplayText()
-                scope.launch {
-                    val file = withContext(Dispatchers.IO) {
-                        EstimateExport.exportActToCsv(
-                            context, act.title, actItems, total,
-                            customerLines = customerLines, executorLines = executorLines,
-                            discountText = discountText, taxPercentText = taxText,
-                            exportLocale = selectedEstimateLocale
-                        )
+                val doExport: () -> Unit = {
+                    val customerLines = buildCustomerLines(project)
+                    val executorLines = buildExecutorLines(userProfile, userAccountType, executorLabel)
+                    val total = actItems.sumOf { it.total }
+                    val discountText = discountDisplayText()
+                    val taxText = taxDisplayText()
+                    scope.launch {
+                        val file = withContext(Dispatchers.IO) {
+                            EstimateExport.exportActToCsv(
+                                context, act.title, actItems, total,
+                                customerLines = customerLines, executorLines = executorLines,
+                                discountText = discountText, taxPercentText = taxText,
+                                exportLocale = selectedEstimateLocale
+                            )
+                        }
+                        if (file != null) shareFile(file, "text/csv")
+                        else Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_LONG).show()
                     }
-                    if (file != null) shareFile(file, "text/csv")
-                    else Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_LONG).show()
+                    Unit
+                }
+                scope.launch {
+                    if (viewModel.isExportDisclaimerSeen()) doExport()
+                    else { showExportDisclaimerDialog = true; pendingExportAction = doExport }
                 }
             }
         )

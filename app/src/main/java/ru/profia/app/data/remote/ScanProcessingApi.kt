@@ -28,6 +28,20 @@ data class ScanDimensionsResult(
     val scanQuality: Double
 )
 
+/** Результат сканирования документа: размеры в мм и распознанное содержимое. */
+data class DocumentScanResult(
+    val scanId: String,
+    val widthMm: Double,
+    val lengthMm: Double,
+    val content: List<DocumentContentLabel>,
+    val hasEngineeringCommunications: Boolean
+)
+
+data class DocumentContentLabel(
+    val label: String,
+    val confidence: Double
+)
+
 interface ScanProcessingApi {
     suspend fun process(
         projectId: String,
@@ -43,6 +57,12 @@ interface ScanProcessingApi {
         roomId: String,
         scanId: String
     ): Result<ScanDimensionsResult>
+
+    /** Сканирование документа: один файл изображения → размеры (мм) и распознанное содержимое. */
+    suspend fun scanDocument(
+        scanId: String,
+        documentFile: File
+    ): Result<DocumentScanResult>
 }
 
 @Singleton
@@ -147,6 +167,43 @@ class DefaultScanProcessingApi @Inject constructor() : ScanProcessingApi {
         }.getOrElse { Result.failure(it) }
     }
 
+    override suspend fun scanDocument(
+        scanId: String,
+        documentFile: File
+    ): Result<DocumentScanResult> = withContext(Dispatchers.IO) {
+        val baseUrl = BuildConfig.SCAN_SERVER_URL.trim().removeSuffix("/")
+        if (baseUrl.isBlank()) {
+            return@withContext Result.failure(IllegalStateException("SCAN_SERVER_URL is empty"))
+        }
+        val mime = when (documentFile.extension.lowercase()) {
+            "png" -> "image/png"
+            else -> "image/jpeg"
+        }
+        val multipart = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("scan_id", scanId)
+            .addFormDataPart(
+                "document",
+                documentFile.name.ifBlank { "document.jpg" },
+                documentFile.asRequestBody(mime.toMediaType())
+            )
+            .build()
+        val request = Request.Builder()
+            .url("$baseUrl/api/v1/scan/document")
+            .post(multipart)
+            .build()
+        runCatching {
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) {
+                    return@runCatching Result.failure(
+                        Exception("Document scan failed: ${response.code} ${response.message}")
+                    )
+                }
+                val body = response.body?.string().orEmpty()
+                Result.success(parseDocumentScanResponse(body))
+            }
+        }.getOrElse { Result.failure(it) }
+    }
+
     private fun parseDimensionsResponse(jsonRaw: String): ScanDimensionsResult {
         val json = JSONObject(jsonRaw.ifBlank { "{}" })
         val dimensions = json.optJSONObject("dimensions") ?: JSONObject()
@@ -163,6 +220,25 @@ class DefaultScanProcessingApi @Inject constructor() : ScanProcessingApi {
             wallAreaM2 = dimensions.optDouble("wall_area_m2", 0.0),
             coveragePercentage = coverage.optDouble("percentage", 0.0),
             scanQuality = quality.optDouble("scan_quality", 0.0)
+        )
+    }
+
+    private fun parseDocumentScanResponse(jsonRaw: String): DocumentScanResult {
+        val json = JSONObject(jsonRaw.ifBlank { "{}" })
+        val contentArray = json.optJSONArray("content") ?: org.json.JSONArray()
+        val content = (0 until contentArray.length()).map { i ->
+            val obj = contentArray.optJSONObject(i) ?: JSONObject()
+            DocumentContentLabel(
+                label = obj.optString("label", ""),
+                confidence = obj.optDouble("confidence", 0.0)
+            )
+        }
+        return DocumentScanResult(
+            scanId = json.optString("scan_id", ""),
+            widthMm = json.optDouble("width_mm", 0.0),
+            lengthMm = json.optDouble("length_mm", 0.0),
+            content = content,
+            hasEngineeringCommunications = json.optBoolean("has_engineering_communications", false)
         )
     }
 

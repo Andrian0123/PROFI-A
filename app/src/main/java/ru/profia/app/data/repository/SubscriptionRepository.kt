@@ -9,6 +9,7 @@ import ru.profia.app.data.model.SubscriptionType
 import ru.profia.app.data.remote.PurchaseVerificationApi
 import java.util.Calendar
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 /** Режим подписки и авторизация («Начать» / «Авторизоваться») обязательны с 01.06.2026. До этой даты — полный доступ без подписки. */
@@ -33,9 +34,23 @@ private val PROMO_CODES = mapOf(
 @Singleton
 class SubscriptionRepository @Inject constructor(
     private val preferencesDataStore: PreferencesDataStore,
-    private val purchaseVerificationApi: PurchaseVerificationApi
+    private val purchaseVerificationApi: PurchaseVerificationApi,
+    @Named("scanner_requires_subscription") private val scannerRequiresSubscription: Boolean
 ) {
     val subscription: Flow<SubscriptionData> = preferencesDataStore.subscriptionFlow
+
+    /**
+     * Доступ к сканеру входит в подписку.
+     * До даты активации подписки (01.06.2026) — доступ у всех, расходы на сканер несём мы.
+     * После этой даты: сборка по ссылке (SCANNER_REQUIRES_SUBSCRIPTION=false) — сканер для теста, доступ у всех;
+     * сборка из магазина (SCANNER_REQUIRES_SUBSCRIPTION=true) — только при активной подписке.
+     */
+    val hasScannerAccess: Flow<Boolean> = subscription.map { data ->
+        val now = System.currentTimeMillis()
+        if (now < SUBSCRIPTION_REQUIRED_FROM_MILLIS) true
+        else if (!scannerRequiresSubscription) true
+        else (data.isActive && data.endDate > now)
+    }
 
     /** До [SUBSCRIPTION_REQUIRED_FROM_MILLIS] подписка не требуется. */
     fun isSubscriptionRequiredNow(): Boolean = System.currentTimeMillis() >= SUBSCRIPTION_REQUIRED_FROM_MILLIS

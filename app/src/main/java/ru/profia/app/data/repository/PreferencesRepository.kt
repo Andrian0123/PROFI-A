@@ -41,4 +41,7 @@ class PreferencesRepository @Inject constructor(
 
     val workTemplates: Flow<List<WorkTemplate>> = dataStore.workTemplatesFlow
     suspend fun addWorkTemplate(template: WorkTemplate) = dataStore.addWorkTemplate(template)
+
+    suspend fun isExportDisclaimerSeen(): Boolean = dataStore.isExportDisclaimerSeen()
+    suspend fun setExportDisclaimerSeen() = dataStore.setExportDisclaimerSeen()
 }

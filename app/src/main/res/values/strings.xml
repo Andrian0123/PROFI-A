@@ -30,6 +30,9 @@
     <string name="add_room_room_name_label">Название комнаты</string>
     <string name="add_room_edit_params">Редактировать параметры комнаты</string>
     <string name="add_room_photo_3d">Фото 3D</string>
+    <string name="add_room_scan_room_dimensions">Сканер помещения — определение размеров</string>
+    <string name="add_room_room_scanner_btn">Сканер помещения</string>
+    <string name="add_room_document_scanner_btn">Сканер документов</string>
     <string name="add_room_length">Длина</string>
     <string name="add_room_width">Ширина</string>
     <string name="add_room_height">Высота</string>
@@ -157,6 +160,10 @@
     <string name="stages_catalog">Справочник этапов работ</string>
     <string name="stages_catalog_hint">Типовой порядок этапов ремонта/строительства. Используйте при планировании сметы.</string>
     <string name="catalog_placeholder">Раздел в разработке. Здесь будет список справочных данных.</string>
+    <string name="add_work_general_title">Общие данные сметы</string>
+    <string name="add_work_general_desc">Название объекта, заказчик и реквизиты задаются в карточке проекта и в профиле (ИП/ООО). Здесь отображаются виды работ по категориям и добавленные позиции.</string>
+    <string name="add_work_materials_title">Материалы</string>
+    <string name="add_work_materials_desc">Материалы учитываются в видах работ по каждой комнате. Добавьте работы в разделе «Виды работ» — расход материалов можно указать в наименовании или в примечаниях к позиции.</string>
     <string name="settings_support">Настройки и поддержка</string>
     <string name="menu_documents">Документы</string>
     <string name="menu_agreement">Соглашение</string>
@@ -300,7 +307,7 @@
     <string name="estimate_col_sum">Сумма</string>
     <string name="estimate_total_per_room">Итого по помещению</string>
     <string name="estimate_customer">Заказчик</string>
-    <string name="estimate_contractor">Подрядчик</string>
+    <string name="estimate_contractor">Исполнитель</string>
     <string name="estimate_discount_line">Скидка: %s</string>
     <string name="estimate_csv_header">Помещение;Раздел;Наименование;Кол-во;Ед.изм.;Цена, ₽;Сумма, ₽</string>
     <string name="acts_discount_5">5%</string>
@@ -324,6 +331,10 @@
     <string name="profile_form_ks2_ks3_btn">Сформировать КС-2 / КС-3</string>
     <string name="generate_and_share">Сформировать и поделиться</string>
     <string name="content_desc_view_estimate">Просмотреть промежуточную смету</string>
+    <string name="content_desc_save_dimensions">Сохранить размеры</string>
+    <string name="content_desc_pick_photo">Выбрать фото</string>
+    <string name="content_desc_attach_file">Прикрепить файл</string>
+    <string name="content_desc_forward">Перейти</string>
     <string name="choose_format_and_share">Выберите формат — файл будет сформирован и предложен для отправки</string>
     <string name="company_section">О компании</string>
     <string name="edit_profile_section_title_profile">Редактирование профиля</string>
@@ -348,6 +359,14 @@
     <string name="edit_profile_error_inn">Введите ИНН</string>
     <string name="requisites_section">Реквизиты</string>
     <string name="ks2_ks3_title">КС-2 / КС-3</string>
+    <string name="form_ks2_ks3_intro">Сформировать документ по форме КС-2 (акт приёмки) или КС-3 (справка о стоимости). Выберите проект и акт.</string>
+    <string name="doc_type_label">Тип документа</string>
+    <string name="ks2_option">КС-2 (Акт приёмки выполненных работ)</string>
+    <string name="ks3_option">КС-3 (Справка о стоимости)</string>
+    <string name="act_intermediate_section">Акт (промежуточная смета)</string>
+    <string name="no_acts_in_project">В проекте нет сохранённых актов.</string>
+    <string name="export_format_pdf">PDF</string>
+    <string name="export_format_csv">Excel (CSV)</string>
     <string name="account_section">Аккаунт</string>
     <string name="change_password">Смена пароля</string>
     <string name="reset_password">Сбросить пароль</string>
@@ -387,6 +406,43 @@
     <string name="change_password_error_min_length">Новый пароль должен быть не короче 6 символов</string>
     <string name="change_password_error_mismatch">Пароли не совпадают</string>
     <string name="auth_error_default">Ошибка авторизации</string>
+    <string name="auth_forgot_password">Забыли пароль?</string>
+    <string name="reset_request_title">Сброс пароля</string>
+    <string name="reset_request_subtitle">Введите логин или email — мы отправим инструкции для сброса пароля</string>
+    <string name="reset_request_login_hint">Логин или email</string>
+    <string name="reset_request_send">Отправить</string>
+    <string name="reset_request_sent">Инструкции отправлены. Проверьте почту или скопируйте код ниже (для теста).</string>
+    <string name="reset_request_go_to_code">Ввести код и новый пароль</string>
+    <string name="reset_password_title">Новый пароль</string>
+    <string name="reset_password_subtitle">Введите код из письма и новый пароль</string>
+    <string name="reset_password_token_hint">Код сброса</string>
+    <string name="reset_password_new_hint">Новый пароль</string>
+    <string name="reset_password_confirm_hint">Повторите пароль</string>
+    <string name="reset_password_submit">Сохранить пароль</string>
+    <string name="reset_password_success">Пароль успешно изменён. Войдите с новым паролем.</string>
+    <string name="reset_password_mismatch">Пароли не совпадают</string>
+
+    <!-- О приложении -->
+    <string name="about_app_name_line">Название: ПРОФЙ-А</string>
+    <string name="about_version_line">Версия: %1$s</string>
+    <string name="about_goal">Цель приложения: Помощь профессионалам и частным лицам в составлении смет на строительные и ремонтные работы</string>
+    <string name="about_update_date">Дата обновления: %1$s</string>
+    <string name="about_developer">Разработчик: ПРОФЙ-А Team</string>
+    <string name="about_copyright">© 2026 Все права защищены</string>
+    <string name="about_auth_warning">⚠️ Внимание: Если вы не проходили повторную авторизацию более 365 дней, ваш аккаунт автоматически удаляется.</string>
+    <string name="app_tool_disclaimer">ПРОФЙ-А — вспомогательный инструмент для составления смет и расчётов. Все сметы и расчёты носят ориентировочный характер. Оператор приложения не несёт ответственности за решения и действия пользователей, совершённые на основе данных, полученных в приложении.</string>
+    <string name="export_disclaimer_footer">Смета сформирована в приложении ПРОФЙ-А в качестве вспомогательного инструмента. Ориентировочный характер. Ответственность за использование несёт составитель.</string>
+    <string name="export_disclaimer_footer_line1">Смета сформирована в ПРОФЙ-А как вспомогательный инструмент.</string>
+    <string name="export_disclaimer_footer_line2">Ориентировочный характер. Ответственность за использование несёт составитель.</string>
+    <string name="export_disclaimer_dialog_title">Напоминание</string>
+    <string name="export_disclaimer_dialog_message">Сметы, сформированные в приложении, носят ориентировочный характер. Ответственность за использование данных несёт пользователь.</string>
+    <string name="export_disclaimer_dialog_ok">Понятно</string>
+    <string name="export_disclaimer_dialog_more">Подробнее</string>
+    <string name="about_privacy_link">Политика конфиденциальности</string>
+
+    <!-- Виды работ (цена) -->
+    <string name="works_price_about">около %1$.0f ₽/%2$s</string>
+    <string name="works_price_range">от %1$.0f до %2$.0f ₽/%3$s</string>
     <string name="change_password_error_default">Не удалось сменить пароль</string>
 
     <!-- Support -->
@@ -426,11 +482,30 @@
     <string name="scan_wall_width_perimeter">Ширина стен по периметру</string>
     <string name="scan_3d_hint">3D-проект: примыкание пола и потолка, внутренние вертикальные углы, окна, двери.</string>
     <string name="scan_instruction">Сканируйте помещение: наведите камеру на пол, потолок, углы и двери</string>
-    <string name="scan_title">Сканирование</string>
-    <string name="scan_subtitle">Сканирование помещений для автоматического определения размеров</string>
+    <string name="scan_title">Сканер помещения</string>
+    <string name="scan_subtitle">Определение размеров помещения: высота стен, периметр, площадь пола</string>
     <string name="scan_server_unavailable_toast">Сервер сканирования недоступен, показаны локальные оценки</string>
+    <string name="scan_error_title">Ошибка при анализе</string>
+    <string name="scan_error_network">Сервер недоступен. Проверьте интернет и повторите.</string>
+    <string name="scan_error_server">Ошибка сервера. Попробуйте позже.</string>
+    <string name="scan_retry">Повторить</string>
+    <string name="scan_coverage_percent">Покрытие скана: %1$.0f%%</string>
     <string name="scan_no_camera_access">Нет доступа к камере</string>
     <string name="scan_pick_file_error">Не удалось открыть выбранный файл</string>
+
+    <!-- Сканер документов -->
+    <string name="doc_scan_title">Сканер документов</string>
+    <string name="doc_scan_subtitle">Определение размеров документа (мм) и распознавание содержимого</string>
+    <string name="doc_scan_pick">Выбрать фото документа</string>
+    <string name="doc_scan_analyzing">Анализ документа…</string>
+    <string name="doc_scan_result">Результат</string>
+    <string name="doc_scan_size">Размер: %1$.0f × %2$.0f мм</string>
+    <string name="doc_scan_engineering">Обнаружены инженерные коммуникации</string>
+    <string name="doc_scan_content">Содержимое</string>
+    <string name="doc_scan_content_item">%1$s (%2$.0f%%)</string>
+    <string name="doc_scan_error">Ошибка: %1$s</string>
+    <string name="doc_scan_server_unavailable">Сервер сканирования недоступен</string>
+    <string name="menu_document_scan">Сканер документов (размеры)</string>
 
     <!-- Справочник видов работ по категориям (WorkCategoryScreen) -->
     <string name="work_ref_plaster">Штукатурка</string>

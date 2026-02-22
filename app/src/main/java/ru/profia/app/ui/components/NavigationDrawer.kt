@@ -22,7 +22,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Support
-import androidx.compose.material.icons.filled.Article
+import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.DrawerState
@@ -81,7 +81,6 @@ fun ProfiANavigationDrawer(
                             DrawerMenuItem(stringResource(R.string.my_profile), Icons.Default.Person, "profile"),
                             DrawerMenuItem(stringResource(R.string.my_projects), Icons.Default.Folder, "home"),
                             DrawerMenuItem(stringResource(R.string.calculator), Icons.Default.Calculate, "calculator"),
-                            DrawerMenuItem(stringResource(R.string.ks2_ks3_title), Icons.Default.Article, "form_ks2_ks3"),
                             DrawerMenuItem(stringResource(R.string.add_foreman), Icons.Default.Build, "foreman")
                         ),
                         currentRoute = currentRoute,
@@ -139,9 +138,9 @@ fun ProfiANavigationDrawer(
                     )
                     DrawerMenuGroup(
                         items = listOf(
-                            DrawerMenuItem(stringResource(R.string.menu_agreement), Icons.Default.Article, "agreement"),
-                            DrawerMenuItem(stringResource(R.string.menu_personal_data), Icons.Default.Article, "personal_data"),
-                            DrawerMenuItem(stringResource(R.string.menu_privacy_policy), Icons.Default.Article, "privacy_policy")
+                            DrawerMenuItem(stringResource(R.string.menu_agreement), Icons.AutoMirrored.Filled.Article, "agreement"),
+                            DrawerMenuItem(stringResource(R.string.menu_personal_data), Icons.AutoMirrored.Filled.Article, "personal_data"),
+                            DrawerMenuItem(stringResource(R.string.menu_privacy_policy), Icons.AutoMirrored.Filled.Article, "privacy_policy")
                         ),
                         currentRoute = currentRoute,
                         onItemClick = {
