@@ -51,16 +51,6 @@
     }
     .card-desc { font-size: 0.95rem; color: var(--text-primary); margin: 0; }
 
-    .disclaimer {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      margin: 1.25rem 0;
-      padding: 1rem 1.25rem;
-      background: var(--surface-variant);
-      border-radius: 10px;
-      border: 1px solid var(--divider);
-    }
-
     .section-title {
       font-size: 0.88rem;
       font-weight: 600;
@@ -90,6 +80,7 @@
 
     .cta { text-align: center; margin: 2.25rem 0; }
     .cta-top { margin-top: 1rem; margin-bottom: 1.5rem; }
+    .cta-buttons { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
     .cta a {
       display: inline-block;
       padding: 0.9rem 1.85rem;
@@ -128,19 +119,19 @@
     </header>
 
     <div class="cta cta-top">
-      <a href="profi-a.apk" download="profi-a.apk">Скачать приложение (APK)</a>
+      <div class="cta-buttons">
+        <a href="profi-a.apk" download="profi-a.apk">Скачать для Android (APK)</a>
+        <!-- После публикации в App Store замените href на ссылку приложения -->
+        <a href="#" id="app-store-link">Скачать в App Store (Apple)</a>
+      </div>
     </div>
-    <p class="cta-note">Приложение для Android</p>
+    <p class="cta-note">Приложение для Android и iPhone / iPad</p>
 
     <div class="card">
       <p class="card-desc">
         ПРОФЙ-А — вспомогательный инструмент для составления смет и расчётов по строительным и ремонтным работам. Проекты, комнаты, виды работ, сметы, акты КС-2/КС-3, экспорт в PDF и CSV.
       </p>
     </div>
-
-    <p class="disclaimer">
-      Все сметы и расчёты носят ориентировочный характер. Ответственность за решения и действия на основе данных приложения несёт пользователь.
-    </p>
 
     <h2 class="section-title">Возможности</h2>
     <ul class="features">

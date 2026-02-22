@@ -28,15 +28,6 @@
   border: 1px solid var(--divider);
 }
 .tilda-profi-a .card-desc { font-size: 0.95rem; margin: 0; }
-.tilda-profi-a .disclaimer {
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-  margin: 1.25rem 0;
-  padding: 1rem 1.25rem;
-  background: var(--surface-variant);
-  border-radius: 10px;
-  border: 1px solid var(--divider);
-}
 .tilda-profi-a .section-title {
   font-size: 0.88rem;
   font-weight: 600;
@@ -62,6 +53,7 @@
 }
 .tilda-profi-a .cta { text-align: center; margin: 2.25rem 0; }
 .tilda-profi-a .cta-top { margin-top: 1rem; margin-bottom: 1.5rem; }
+.tilda-profi-a .cta-buttons { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
 .tilda-profi-a .cta a {
   display: inline-block;
   padding: 0.9rem 1.85rem;
@@ -83,13 +75,15 @@
   <h1 class="logo">ПРОФЙ-А</h1>
   <p class="tagline">Сметы и акты для строительства и ремонта</p>
   <div class="cta cta-top">
-    <a href="https://andrian0123.github.io/PROFI-A/profi-a.apk" download="profi-a.apk">Скачать приложение (APK)</a>
+    <div class="cta-buttons">
+      <a href="https://andrian0123.github.io/PROFI-A/profi-a.apk" download="profi-a.apk">Скачать для Android (APK)</a>
+      <a href="#" id="app-store-link">Скачать в App Store (Apple)</a>
+    </div>
   </div>
-  <p class="cta-note">Приложение для Android</p>
+  <p class="cta-note">Приложение для Android и iPhone / iPad</p>
   <div class="card">
     <p class="card-desc">ПРОФЙ-А — вспомогательный инструмент для составления смет и расчётов по строительным и ремонтным работам. Проекты, комнаты, виды работ, сметы, акты КС-2/КС-3, экспорт в PDF и CSV.</p>
   </div>
-  <p class="disclaimer">Все сметы и расчёты носят ориентировочный характер. Ответственность за решения и действия на основе данных приложения несёт пользователь.</p>
   <h2 class="section-title">Возможности</h2>
   <ul class="features">
     <li>Проекты и помещения с расчётом площадей (пол, стены, потолок, проёмы)</li>
