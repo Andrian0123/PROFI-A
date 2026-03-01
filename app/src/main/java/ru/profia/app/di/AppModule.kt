@@ -13,6 +13,7 @@ import ru.profia.app.data.local.MIGRATION_1_2
 import ru.profia.app.data.local.MIGRATION_2_3
 import ru.profia.app.data.local.MIGRATION_3_4
 import ru.profia.app.data.local.MIGRATION_4_5
+import ru.profia.app.data.local.MIGRATION_5_6
 import ru.profia.app.data.local.dao.IntermediateEstimateActDao
 import ru.profia.app.data.local.dao.OpeningDao
 import ru.profia.app.data.local.dao.ProjectDao
@@ -47,7 +48,10 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "profia_database"
-        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5).build()
+        )
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
     @Singleton

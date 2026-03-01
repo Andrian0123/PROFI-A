@@ -28,9 +28,13 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        runBlocking {
-            val language = preferencesRepository.appSettings.first().language
-            AppLocaleHelper.applyLanguage(language)
+        try {
+            runBlocking {
+                val language = preferencesRepository.appSettings.first().language
+                AppLocaleHelper.applyLanguage(language)
+            }
+        } catch (e: Exception) {
+            AppLocaleHelper.applyLanguage("RU")
         }
         ComposeFoundationFlags.isNonComposedClickableEnabled = false
         enableEdgeToEdge()

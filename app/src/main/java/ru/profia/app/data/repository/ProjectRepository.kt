@@ -344,13 +344,19 @@ class ProjectRepository @Inject constructor(
     }
 
     /**
-     * Создаёт один демонстрационный проект с несколькими комнатами,
-     * если в базе ещё нет ни одного проекта.
+     * Восстанавливает несколько демонстрационных проектов с комнатами,
+     * если в базе ещё нет ни одного проекта (например, после переустановки на эмуляторе).
      */
     suspend fun ensureDemoProject() {
-        val count = projectDao.getProjectsCount()
-        if (count > 0) return
+        try {
+            val count = projectDao.getProjectsCount()
+            if (count > 0) return
+        } catch (_: Exception) {
+            return
+        }
 
+        try {
+            // Проект 1: Демо (Краснодар)
         val demoProjectData = ProjectFormData(
             lastName = "Демо",
             firstName = "Проект",
@@ -374,7 +380,6 @@ class ProjectRepository @Inject constructor(
             boxesLength = 0.0
         )
         val demoProjectId = addProject(demoProjectData, livingRoom)
-
         val kitchen = RoomFormData(
             name = "Кухня",
             length = 3.5,
@@ -395,9 +400,83 @@ class ProjectRepository @Inject constructor(
             hasBoxes = true,
             boxesLength = 3.0
         )
-
         addRoom(demoProjectId, kitchen, emptyList())
         addRoom(demoProjectId, bathroom, emptyList())
+
+        // Проект 2: Иванов (Москва)
+        val project2Data = ProjectFormData(
+            lastName = "Иванов",
+            firstName = "Иван",
+            middleName = "Иванович",
+            email = "ivanov@example.com",
+            phone = "+7 (999) 123-45-67",
+            address = "г. Москва, ул. Строителей, д. 1",
+            city = "Москва",
+            street = "Строителей",
+            house = "1",
+            apartment = "10"
+        )
+        val room2_1 = RoomFormData(
+            name = "Кухня",
+            length = 4.0,
+            width = 3.0,
+            height = 2.7,
+            hasSlopes = false,
+            slopesLength = 0.0,
+            hasBoxes = false,
+            boxesLength = 0.0
+        )
+        val project2Id = addProject(project2Data, room2_1)
+        val room2_2 = RoomFormData(
+            name = "Гостиная",
+            length = 5.0,
+            width = 4.0,
+            height = 2.7,
+            hasSlopes = false,
+            slopesLength = 0.0,
+            hasBoxes = false,
+            boxesLength = 0.0
+        )
+        addRoom(project2Id, room2_2, emptyList())
+
+        // Проект 3: Петрова (Санкт-Петербург)
+        val project3Data = ProjectFormData(
+            lastName = "Петрова",
+            firstName = "Мария",
+            middleName = "Сергеевна",
+            email = "petrova@example.com",
+            phone = "+7 (999) 765-43-21",
+            address = "г. Санкт-Петербург, Невский пр., д. 5",
+            city = "Санкт-Петербург",
+            street = "Невский пр.",
+            house = "5",
+            apartment = null
+        )
+        val room3_1 = RoomFormData(
+            name = "Спальня",
+            length = 3.5,
+            width = 3.0,
+            height = 2.7,
+            hasSlopes = false,
+            slopesLength = 0.0,
+            hasBoxes = false,
+            boxesLength = 0.0
+        )
+        val project3Id = addProject(project3Data, room3_1)
+        val room3_2 = RoomFormData(
+            name = "Ванная",
+            length = 2.0,
+            width = 2.0,
+            height = 2.7,
+            hasSlopes = false,
+            slopesLength = 0.0,
+            hasBoxes = false,
+            boxesLength = 0.0
+        )
+        addRoom(project3Id, room3_2, emptyList())
+        } catch (_: Exception) {
+            // Не падаем при ошибке восстановления демо-проектов
+        }
     }
 
     private fun createRoomEntity(

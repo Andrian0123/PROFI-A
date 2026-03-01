@@ -1,0 +1,133 @@
+{
+  "projects": [
+    {
+      "id": "demo-project-1",
+      "lastName": "Иванов",
+      "firstName": "Иван",
+      "middleName": "Иванович",
+      "email": "ivanov@example.com",
+      "phone": "+7 (999) 123-45-67",
+      "address": "г. Москва, ул. Строителей, д. 1",
+      "city": "Москва",
+      "street": "Строителей",
+      "house": "1",
+      "apartment": "10",
+      "discountText": null,
+      "taxPercentText": null
+    },
+    {
+      "id": "demo-project-2",
+      "lastName": "Петрова",
+      "firstName": "Мария",
+      "middleName": "Сергеевна",
+      "email": "petrova@example.com",
+      "phone": "+7 (999) 765-43-21",
+      "address": "г. Санкт-Петербург, Невский пр., д. 5",
+      "city": "Санкт-Петербург",
+      "street": "Невский пр.",
+      "house": "5",
+      "apartment": null,
+      "discountText": null,
+      "taxPercentText": null
+    },
+    {
+      "id": "demo-project-3",
+      "lastName": "Сидоров",
+      "firstName": "Алексей",
+      "middleName": null,
+      "email": null,
+      "phone": "+7 (999) 111-22-33",
+      "address": "г. Казань, ул. Баумана, д. 12",
+      "city": "Казань",
+      "street": "Баумана",
+      "house": "12",
+      "apartment": "3",
+      "discountText": null,
+      "taxPercentText": null
+    }
+  ],
+  "rooms": [
+    {
+      "id": "demo-room-1-1",
+      "projectId": "demo-project-1",
+      "name": "Кухня",
+      "length": 4.0,
+      "width": 3.0,
+      "height": 2.7,
+      "floorArea": 12.0,
+      "wallArea": 37.8,
+      "ceilingArea": 12.0,
+      "perimeter": 14.0,
+      "hasSlopes": false,
+      "slopesLength": 0.0,
+      "hasBoxes": false,
+      "boxesLength": 0.0
+    },
+    {
+      "id": "demo-room-1-2",
+      "projectId": "demo-project-1",
+      "name": "Гостиная",
+      "length": 5.0,
+      "width": 4.0,
+      "height": 2.7,
+      "floorArea": 20.0,
+      "wallArea": 48.6,
+      "ceilingArea": 20.0,
+      "perimeter": 18.0,
+      "hasSlopes": false,
+      "slopesLength": 0.0,
+      "hasBoxes": false,
+      "boxesLength": 0.0
+    },
+    {
+      "id": "demo-room-2-1",
+      "projectId": "demo-project-2",
+      "name": "Спальня",
+      "length": 3.5,
+      "width": 3.0,
+      "height": 2.7,
+      "floorArea": 10.5,
+      "wallArea": 35.1,
+      "ceilingArea": 10.5,
+      "perimeter": 13.0,
+      "hasSlopes": false,
+      "slopesLength": 0.0,
+      "hasBoxes": false,
+      "boxesLength": 0.0
+    },
+    {
+      "id": "demo-room-3-1",
+      "projectId": "demo-project-3",
+      "name": "Ванная",
+      "length": 2.0,
+      "width": 2.0,
+      "height": 2.7,
+      "floorArea": 4.0,
+      "wallArea": 21.6,
+      "ceilingArea": 4.0,
+      "perimeter": 8.0,
+      "hasSlopes": false,
+      "slopesLength": 0.0,
+      "hasBoxes": false,
+      "boxesLength": 0.0
+    }
+  ],
+  "openings": [
+    {
+      "id": "demo-opening-1",
+      "roomId": "demo-room-1-1",
+      "type": "WINDOW",
+      "width": 1.2,
+      "height": 1.5,
+      "count": 1
+    },
+    {
+      "id": "demo-opening-2",
+      "roomId": "demo-room-1-1",
+      "type": "DOOR",
+      "width": 0.9,
+      "height": 2.0,
+      "count": 1
+    }
+  ]
+}
